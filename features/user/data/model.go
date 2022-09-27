@@ -18,10 +18,22 @@ type User struct {
 }
 
 type Mitra struct {
-	gorm.Model
+	ID      int
 	FileKTP string
 	Status  string
-	UserID  int
+}
+
+func fromCore(dataCore user.Core) User {
+	dataModel := User{
+		Name:       dataCore.Name,
+		Email:      dataCore.Email,
+		Password:   dataCore.Password,
+		Phone:      dataCore.Phone,
+		Address:    dataCore.Address,
+		Role:       dataCore.Role,
+		MitraModel: Mitra{FileKTP: dataCore.Mitra.FileKTP},
+	}
+	return dataModel
 }
 
 func (data *User) toCore() user.Core {
@@ -32,5 +44,6 @@ func (data *User) toCore() user.Core {
 		Password: data.Password,
 		Phone:    data.Phone,
 		Address:  data.Address,
+		Mitra:    user.Mitra{FileKTP: data.MitraModel.FileKTP},
 	}
 }

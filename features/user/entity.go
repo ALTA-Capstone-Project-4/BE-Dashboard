@@ -8,14 +8,13 @@ type Core struct {
 	Phone    string
 	Address  string
 	Role     string
-	MitraKTP string
+	Mitra    Mitra
 }
 
 type Mitra struct {
 	ID      int
 	FileKTP string
 	Status  string
-	UserID  int
 }
 
 type UsecaseInterface interface {

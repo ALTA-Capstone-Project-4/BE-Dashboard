@@ -18,7 +18,7 @@ type MitraRequest struct {
 	Phone    string `json:"phone" form:"phone"`
 	Address  string `json:"address" form:"address"`
 	Role     string `json:"role" form:"role"`
-	MitraKTP string `json:"mitraktp" form:"mitraktp"`
+	FileKTP  string `json:"file_ktp" form:"file_ktp"`
 }
 
 func userToCore(data UserRequest) user.Core {
@@ -40,6 +40,6 @@ func mitraToCore(data MitraRequest) user.Core {
 		Phone:    data.Phone,
 		Address:  data.Address,
 		Role:     data.Role,
-		MitraKTP: data.MitraKTP,
+		Mitra:    user.Mitra{FileKTP: data.FileKTP},
 	}
 }
