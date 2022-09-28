@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func JWTMiddleware() echo.MiddlewareFunc {
@@ -26,7 +27,7 @@ func CreateToken(userId int, role string) (string, error) {
 	claims["authorized"] = true
 	claims["userId"] = userId
 	claims["role"] = role
-	claims["exp"] = time.Now().Add(time.Hour * 2).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(config.SECRET_JWT))
 
@@ -55,15 +56,15 @@ func ExtractToken(c echo.Context) (int, string, error) {
 
 	if datajwt.Valid {
 		claims := datajwt.Claims.(jwt.MapClaims)
-		UserId := claims["UserId"].(float64)
+		userId := claims["userId"].(float64)
 		role := claims["role"].(string)
-		return int(UserId), role, nil
+		return int(userId), role, nil
 	}
 
 	return -1, "", fmt.Errorf("token invalid")
 }
 
-// func CheckPasswordHash(password, hash string) bool {
-// 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-// 	return err == nil
-// }
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
