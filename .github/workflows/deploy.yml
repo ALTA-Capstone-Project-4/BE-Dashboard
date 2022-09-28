@@ -1,0 +1,29 @@
+name : Deploy to EC2
+
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing connect to server using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/muhdwiar/BE-Dashboard
+            git pull origin main
+            docker stop warehouse-container 
+            docker rm warehouse-container 
+            docker rmi muhdwiar/warehouse-image:latest
+            docker build -t muhdwiar/warehouse-image:latest .
+            docker run -d -p 80:8000 -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} -e SERVER_PORT=${{ secrets.SERVER_PORT }} --name warehouse-container muhdwiar/warehouse-image:latest
+             
+       
