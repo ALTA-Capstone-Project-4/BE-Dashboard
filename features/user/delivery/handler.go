@@ -19,7 +19,7 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 		userUsecase: usecase,
 	}
 
-	e.POST("/register", handler.PostUser, middlewares.JWTMiddleware())
+	e.POST("/register", handler.PostUser)
 	e.GET("/profile/users/:id", handler.GetUserProfile, middlewares.JWTMiddleware())
 	e.PUT("/profile/user", handler.PutUser, middlewares.JWTMiddleware())
 	e.DELETE("/admin/mitra/:id", handler.DeleteMitra, middlewares.JWTMiddleware())
