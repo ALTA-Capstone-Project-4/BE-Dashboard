@@ -46,7 +46,8 @@ func (delivery *UserDelivery) PostUser(c echo.Context) error {
 
 	err = config.Uploader.UploadFile(blobFile, f.Filename)
 	if err != nil {
-		return c.JSON(500, helper.FailedResponseHelper("error upload ktp file"))
+
+		return c.JSON(500, helper.FailedResponseHelper(err.Error()))
 	}
 
 	row, err := delivery.userUsecase.PostUser(toCore(userRegister))
