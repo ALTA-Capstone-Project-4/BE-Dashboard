@@ -26,15 +26,6 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 }
 
 func (delivery *UserDelivery) PostUser(c echo.Context) error {
-	// _, role, errToken := middlewares.ExtractToken(c)
-
-	// if role != "admin" {
-	// 	return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
-	// }
-	// if errToken != nil {
-	// 	return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
-	// }
-
 	var userRegister UserRequest
 
 	errBind := c.Bind(&userRegister)
