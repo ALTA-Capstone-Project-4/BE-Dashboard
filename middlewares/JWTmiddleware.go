@@ -33,19 +33,6 @@ func CreateToken(userId int, role string) (string, error) {
 
 }
 
-// func ExtractData(c echo.Context) int {
-
-// 	user := c.Get("user").(*jwt.Token)
-
-// 	if user.Valid {
-// 		claims := user.Claims.(jwt.MapClaims)
-// 		userId := claims["userId"].(float64)
-// 		return int(userId)
-// 	}
-
-// 	return 0
-// }
-
 func ExtractToken(c echo.Context) (int, string, error) {
 	headerData := c.Request().Header.Get("Authorization")
 	dataAuth := strings.Split(headerData, " ")

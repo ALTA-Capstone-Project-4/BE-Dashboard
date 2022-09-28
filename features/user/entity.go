@@ -1,24 +1,32 @@
 package user
 
 type Core struct {
-	ID       int
-	Name     string
-	Email    string
-	Password string
-	Phone    string
-	Address  string
-	Role     string
-	Mitra    Mitra
+	ID             int
+	Name           string
+	Email          string
+	Password       string
+	Phone          string
+	Address        string
+	Photo          string
+	FileKTP        string
+	Role           string
+	GudangID       int
+	GudangName     string
+	GudangLocation string
 }
 
-type Mitra struct {
-	ID      int
-	FileKTP string
-	Status  string
+type Gudang struct {
+	ID       int
+	Name     string
+	Location string
 }
 
 type UsecaseInterface interface {
+	PostUser(data Core) (int, error)
+	GetMitraId(id int) (Core, error)
 }
 
 type DataInterface interface {
+	AddUser(data Core) (int, error)
+	SelectMitra(id int) (Core, error)
 }
