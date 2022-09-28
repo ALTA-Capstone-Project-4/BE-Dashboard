@@ -41,8 +41,17 @@ func (usecase *userUsecase) GetMitraId(id int) (user.Core, error) {
 	return data, nil
 }
 
-func (usecase *userUsecase) PutMitra(id int, updateData user.Core) (int, error) {
-	row, err := usecase.userData.UpdateMitra(id, updateData)
+func (usecase *userUsecase) PutUser(id int, updateData user.Core) (int, error) {
+	row, err := usecase.userData.UpdateUser(id, updateData)
+	if err != nil || row < 1 {
+		return -1, err
+	}
+
+	return 1, nil
+}
+
+func (usecase *userUsecase) DeleteMitra(id int) (int, error) {
+	row, err := usecase.userData.DeleteMitraData(id)
 	if err != nil || row < 1 {
 		return -1, err
 	}

@@ -35,9 +35,18 @@ func (repo *userData) SelectMitra(id int) (user.Core, error) {
 	return mitraProfile.toCore(), nil
 }
 
-func (repo *userData) UpdateMitra(id int, updateData user.Core) (int, error) {
+func (repo *userData) UpdateUser(id int, updateData user.Core) (int, error) {
 	dataModel := fromCore(updateData)
 	tx := repo.db.Model(&User{}).Where("id = ?", id).Updates(dataModel)
+	if tx.Error != nil {
+		return -1, tx.Error
+	}
+	return 1, nil
+}
+
+func (repo *userData) DeleteMitraData(id int) (int, error) {
+	var deleteData User
+	tx := repo.db.Where("id = ?", id).Delete(&deleteData)
 	if tx.Error != nil {
 		return -1, tx.Error
 	}
