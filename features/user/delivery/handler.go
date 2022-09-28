@@ -21,6 +21,7 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 
 	e.POST("/register", handler.PostUser, middlewares.JWTMiddleware())
 	e.GET("/admin/mitra/:id", handler.GetMitraId, middlewares.JWTMiddleware())
+	e.PUT("/profile/mitra", handler.PostUser, middlewares.JWTMiddleware())
 }
 
 func (delivery *UserDelivery) PostUser(c echo.Context) error {
@@ -70,4 +71,32 @@ func (delivery *UserDelivery) GetMitraId(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCore(data)))
+}
+
+func (delivery *UserDelivery) PutMitra(c echo.Context) error {
+	id, role, errToken := middlewares.ExtractToken(c)
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+	if role == "client" || role == "admin" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
+	}
+
+	var dataUpdate UserRequest
+
+	errBind := c.Bind(&dataUpdate)
+	if errBind != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+	}
+
+	row, err := delivery.userUsecase.PutMitra(id, toCore(dataUpdate))
+	if err != nil {
+		return c.JSON(500, helper.FailedResponseHelper("error update data"))
+	}
+	if row != 1 {
+		return c.JSON(500, helper.FailedResponseHelper("error update data"))
+	}
+
+	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
+
 }
