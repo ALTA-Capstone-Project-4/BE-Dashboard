@@ -21,7 +21,8 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 
 	e.POST("/register", handler.PostUser, middlewares.JWTMiddleware())
 	e.GET("/admin/mitra/:id", handler.GetMitraId, middlewares.JWTMiddleware())
-	e.PUT("/profile/mitra", handler.PostUser, middlewares.JWTMiddleware())
+	e.PUT("/profile/user", handler.PutUser, middlewares.JWTMiddleware())
+	e.DELETE("/admin/mitra/:id", handler.DeleteMitra, middlewares.JWTMiddleware())
 }
 
 func (delivery *UserDelivery) PostUser(c echo.Context) error {
@@ -73,13 +74,10 @@ func (delivery *UserDelivery) GetMitraId(c echo.Context) error {
 	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCore(data)))
 }
 
-func (delivery *UserDelivery) PutMitra(c echo.Context) error {
-	id, role, errToken := middlewares.ExtractToken(c)
+func (delivery *UserDelivery) PutUser(c echo.Context) error {
+	id, _, errToken := middlewares.ExtractToken(c)
 	if errToken != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
-	}
-	if role == "client" || role == "admin" {
-		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
 	}
 
 	var dataUpdate UserRequest
@@ -89,7 +87,7 @@ func (delivery *UserDelivery) PutMitra(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("error bind"))
 	}
 
-	row, err := delivery.userUsecase.PutMitra(id, toCore(dataUpdate))
+	row, err := delivery.userUsecase.PutUser(id, toCore(dataUpdate))
 	if err != nil {
 		return c.JSON(500, helper.FailedResponseHelper("error update data"))
 	}
@@ -98,5 +96,28 @@ func (delivery *UserDelivery) PutMitra(c echo.Context) error {
 	}
 
 	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
+}
+
+func (delivery *UserDelivery) DeleteMitra(c echo.Context) error {
+	_, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "admin" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
+	}
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	id := c.Param("id")
+	idCnv, errId := strconv.Atoi(id)
+	if errId != nil {
+		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
+	}
+
+	row, err := delivery.userUsecase.DeleteMitra(idCnv)
+	if err != nil || row != 1 {
+		return c.JSON(400, helper.FailedResponseHelper("failed delete"))
+	}
+	return c.JSON(200, helper.SuccessResponseHelper("success delete"))
 
 }
