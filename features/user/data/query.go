@@ -15,3 +15,22 @@ func New(db *gorm.DB) user.DataInterface {
 		db: db,
 	}
 }
+
+func (repo *userData) AddUser(data user.Core) (int, error) {
+	dataModel := fromCore(data)
+	tx := repo.db.Create(&dataModel)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return int(tx.RowsAffected), nil
+}
+
+func (repo *userData) SelectMitra(id int) (user.Core, error) {
+	var mitraProfile User
+	tx := repo.db.Where("id = ?", id).Preload("Gudang").Find(&mitraProfile)
+	if tx.Error != nil {
+		return user.Core{}, tx.Error
+	}
+	return mitraProfile.toCore(), nil
+}
