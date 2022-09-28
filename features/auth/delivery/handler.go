@@ -21,6 +21,7 @@ func New(e *echo.Echo, usecase auth.UsecaseInterface) {
 
 }
 
+// function login
 func (delivery *AuthDelivery) Auth(c echo.Context) error {
 	var req AuthRequest
 	errBind := c.Bind(&req)
