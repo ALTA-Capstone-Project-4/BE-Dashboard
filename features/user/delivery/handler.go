@@ -3,6 +3,7 @@ package delivery
 import (
 	"net/http"
 	"strconv"
+	"warehouse/config"
 	"warehouse/features/user"
 	"warehouse/middlewares"
 	"warehouse/utils/helper"
@@ -31,6 +32,21 @@ func (delivery *UserDelivery) PostUser(c echo.Context) error {
 	errBind := c.Bind(&userRegister)
 	if errBind != nil {
 		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+	}
+
+	f, err := c.FormFile("file_ktp")
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error bind ktp file"))
+	}
+
+	blobFile, err := f.Open()
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error open ktp file"))
+	}
+
+	err = config.Uploader.UploadFile(blobFile, f.Filename)
+	if err != nil {
+		return c.JSON(500, helper.FailedResponseHelper("error upload ktp file"))
 	}
 
 	row, err := delivery.userUsecase.PostUser(toCore(userRegister))
