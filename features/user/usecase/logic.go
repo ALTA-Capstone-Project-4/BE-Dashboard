@@ -40,3 +40,12 @@ func (usecase *userUsecase) GetMitraId(id int) (user.Core, error) {
 
 	return data, nil
 }
+
+func (usecase *userUsecase) PutMitra(id int, updateData user.Core) (int, error) {
+	row, err := usecase.userData.UpdateMitra(id, updateData)
+	if err != nil || row < 1 {
+		return -1, err
+	}
+
+	return 1, nil
+}

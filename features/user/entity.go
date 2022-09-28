@@ -24,9 +24,11 @@ type Gudang struct {
 type UsecaseInterface interface {
 	PostUser(data Core) (int, error)
 	GetMitraId(id int) (Core, error)
+	PutMitra(id int, data Core) (int, error)
 }
 
 type DataInterface interface {
 	AddUser(data Core) (int, error)
 	SelectMitra(id int) (Core, error)
+	UpdateMitra(id int, data Core) (int, error)
 }
