@@ -26,13 +26,21 @@ func (repo *userData) AddUser(data user.Core) (int, error) {
 	return int(tx.RowsAffected), nil
 }
 
-func (repo *userData) SelectMitra(id int) (user.Core, error) {
-	var mitraProfile User
-	tx := repo.db.Where("id = ?", id).Preload("Gudang").Find(&mitraProfile)
-	if tx.Error != nil {
-		return user.Core{}, tx.Error
+func (repo *userData) SelectUserProfile(id int, userId int) (user.Core, error) {
+	var data User
+
+	if data.Role == "admin" || data.Role == "mitra" {
+		tx := repo.db.Where("id = ?", id).Preload("Gudang").Find(&data)
+		if tx.Error != nil {
+			return user.Core{}, tx.Error
+		}
+	} else {
+		txClient := repo.db.Where("id = ?", userId).Find(&data)
+		if txClient.Error != nil {
+			return user.Core{}, txClient.Error
+		}
 	}
-	return mitraProfile.toCore(), nil
+	return data.toCore(), nil
 }
 
 func (repo *userData) UpdateUser(id int, updateData user.Core) (int, error) {
