@@ -20,7 +20,7 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 	}
 
 	e.POST("/register", handler.PostUser, middlewares.JWTMiddleware())
-	e.GET("/admin/mitra/:id", handler.GetMitraId, middlewares.JWTMiddleware())
+	e.GET("/profile/users/:id", handler.GetUserProfile, middlewares.JWTMiddleware())
 	e.PUT("/profile/user", handler.PutUser, middlewares.JWTMiddleware())
 	e.DELETE("/admin/mitra/:id", handler.DeleteMitra, middlewares.JWTMiddleware())
 }
@@ -53,20 +53,13 @@ func (delivery *UserDelivery) PostUser(c echo.Context) error {
 	return c.JSON(201, helper.SuccessResponseHelper("success insert data"))
 }
 
-func (delivery *UserDelivery) GetMitraId(c echo.Context) error {
-	_, role, errToken := middlewares.ExtractToken(c)
-
-	if role == "client" {
-		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
-	}
-	if errToken != nil {
-		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
-	}
-
+func (delivery *UserDelivery) GetUserProfile(c echo.Context) error {
 	id := c.Param("id")
 	idCnv, _ := strconv.Atoi(id)
 
-	data, err := delivery.userUsecase.GetMitraId(idCnv)
+	userId, _, err := middlewares.ExtractToken(c)
+
+	data, err := delivery.userUsecase.GetUserProfile(idCnv, userId)
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper("error get data"))
 	}

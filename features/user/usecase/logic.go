@@ -32,8 +32,8 @@ func (usecase *userUsecase) PostUser(data user.Core) (int, error) {
 	return row, nil
 }
 
-func (usecase *userUsecase) GetMitraId(id int) (user.Core, error) {
-	data, err := usecase.userData.SelectMitra(id)
+func (usecase *userUsecase) GetUserProfile(id int, userId int) (user.Core, error) {
+	data, err := usecase.userData.SelectUserProfile(id, userId)
 	if err != nil {
 		return user.Core{}, err
 	}
