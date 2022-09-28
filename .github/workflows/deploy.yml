@@ -18,7 +18,7 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /home/muhdwiar/BE-Dashboard
+            cd /home/muhdwi45/BE-Dashboard
             git pull origin main
             docker stop warehouse-container 
             docker rm warehouse-container 
