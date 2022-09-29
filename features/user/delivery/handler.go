@@ -21,8 +21,9 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 	}
 
 	e.POST("/register", handler.PostUser)
-	e.GET("/mitra/:id", handler.GetMitra, middlewares.JWTMiddleware())
-	// e.PUT("/profile/user", handler.PutUser, middlewares.JWTMiddleware())
+	e.GET("/mitra/:id", handler.GetMitraByAdmin, middlewares.JWTMiddleware())
+	e.GET("/mitra", handler.GetMitra, middlewares.JWTMiddleware())
+	e.PUT("/mitra", handler.PutMitra, middlewares.JWTMiddleware())
 	// e.DELETE("/users/:id", handler.DeleteUser, middlewares.JWTMiddleware())
 }
 
@@ -62,7 +63,7 @@ func (delivery *UserDelivery) PostUser(c echo.Context) error {
 	return c.JSON(201, helper.SuccessResponseHelper("success insert data"))
 }
 
-func (delivery *UserDelivery) GetMitra(c echo.Context) error {
+func (delivery *UserDelivery) GetMitraByAdmin(c echo.Context) error {
 	_, role, errToken := middlewares.ExtractToken(c)
 
 	if role != "admin" {
@@ -83,29 +84,44 @@ func (delivery *UserDelivery) GetMitra(c echo.Context) error {
 	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCore(data)))
 }
 
-// func (delivery *UserDelivery) PutUser(c echo.Context) error {
-// 	id, _, errToken := middlewares.ExtractToken(c)
-// 	if errToken != nil {
-// 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
-// 	}
+func (delivery *UserDelivery) GetMitra(c echo.Context) error {
+	token, _, errToken := middlewares.ExtractToken(c)
 
-// 	var dataUpdate UserRequest
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
 
-// 	errBind := c.Bind(&dataUpdate)
-// 	if errBind != nil {
-// 		return c.JSON(400, helper.FailedResponseHelper("error bind"))
-// 	}
+	data, err := delivery.userUsecase.GetMitra(token)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error get data"))
+	}
 
-// 	row, err := delivery.userUsecase.PutUser(id, toCore(dataUpdate))
-// 	if err != nil {
-// 		return c.JSON(500, helper.FailedResponseHelper("error update data"))
-// 	}
-// 	if row != 1 {
-// 		return c.JSON(500, helper.FailedResponseHelper("error update data"))
-// 	}
+	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCore(data)))
+}
 
-// 	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
-// }
+func (delivery *UserDelivery) PutMitra(c echo.Context) error {
+	token, _, errToken := middlewares.ExtractToken(c)
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	var dataUpdate UserRequest
+
+	errBind := c.Bind(&dataUpdate)
+	if errBind != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+	}
+
+	row, err := delivery.userUsecase.PutMitra(token, toCore(dataUpdate))
+	if err != nil {
+		return c.JSON(500, helper.FailedResponseHelper("error update data"))
+	}
+	if row != 1 {
+		return c.JSON(500, helper.FailedResponseHelper("error update data"))
+	}
+
+	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
+}
 
 // func (delivery *UserDelivery) DeleteUser(c echo.Context) error {
 // 	_, role, errToken := middlewares.ExtractToken(c)
