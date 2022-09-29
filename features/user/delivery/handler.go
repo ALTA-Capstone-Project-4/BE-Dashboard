@@ -20,9 +20,9 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 	}
 
 	e.POST("/register", handler.PostUser)
-	e.GET("/profile/users/:id", handler.GetUserProfile, middlewares.JWTMiddleware())
+	e.GET("/profile/:id", handler.GetUserProfile, middlewares.JWTMiddleware())
 	e.PUT("/profile/user", handler.PutUser, middlewares.JWTMiddleware())
-	e.DELETE("/admin/mitra/:id", handler.DeleteMitra, middlewares.JWTMiddleware())
+	e.DELETE("/users/:id", handler.DeleteUser, middlewares.JWTMiddleware())
 }
 
 func (delivery *UserDelivery) PostUser(c echo.Context) error {
@@ -64,9 +64,10 @@ func (delivery *UserDelivery) GetUserProfile(c echo.Context) error {
 	id := c.Param("id")
 	idCnv, _ := strconv.Atoi(id)
 
-	userId, _, err := middlewares.ExtractToken(c)
+	query := c.QueryParam("admin")
+	query1 := c.QueryParam("mitra")
 
-	data, err := delivery.userUsecase.GetUserProfile(idCnv, userId)
+	data, err := delivery.userUsecase.GetUserProfile(idCnv, query, query1)
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper("error get data"))
 	}
@@ -98,10 +99,10 @@ func (delivery *UserDelivery) PutUser(c echo.Context) error {
 	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
 }
 
-func (delivery *UserDelivery) DeleteMitra(c echo.Context) error {
+func (delivery *UserDelivery) DeleteUser(c echo.Context) error {
 	_, role, errToken := middlewares.ExtractToken(c)
 
-	if role != "admin" {
+	if role == "mitra" {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
 	}
 	if errToken != nil {
@@ -114,7 +115,10 @@ func (delivery *UserDelivery) DeleteMitra(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
 	}
 
-	row, err := delivery.userUsecase.DeleteMitra(idCnv)
+	query := c.QueryParam("admin")
+	query1 := c.QueryParam("client")
+
+	row, err := delivery.userUsecase.DeleteUser(idCnv, query, query1)
 	if err != nil || row != 1 {
 		return c.JSON(400, helper.FailedResponseHelper("failed delete"))
 	}
