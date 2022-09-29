@@ -32,8 +32,8 @@ func (usecase *userUsecase) PostUser(data user.Core) (int, error) {
 	return row, nil
 }
 
-func (usecase *userUsecase) GetUserProfile(id int, userId int) (user.Core, error) {
-	data, err := usecase.userData.SelectUserProfile(id, userId)
+func (usecase *userUsecase) GetUserProfile(id int, admin string, mitra string) (user.Core, error) {
+	data, err := usecase.userData.SelectUserProfile(id, mitra, admin)
 	if err != nil {
 		return user.Core{}, err
 	}
@@ -50,8 +50,8 @@ func (usecase *userUsecase) PutUser(id int, updateData user.Core) (int, error) {
 	return 1, nil
 }
 
-func (usecase *userUsecase) DeleteMitra(id int) (int, error) {
-	row, err := usecase.userData.DeleteMitraData(id)
+func (usecase *userUsecase) DeleteUser(id int, admin string, client string) (int, error) {
+	row, err := usecase.userData.DeleteData(id, admin, client)
 	if err != nil || row < 1 {
 		return -1, err
 	}

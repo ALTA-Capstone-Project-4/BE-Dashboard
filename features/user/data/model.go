@@ -51,6 +51,7 @@ func (data *User) toCore() user.Core {
 		Phone:          data.Phone,
 		FileKTP:        data.FileKTP,
 		Address:        data.Address,
+		Photo:          data.Photo,
 		GudangID:       data.GudangID,
 		GudangName:     data.Gudang.Name,
 		GudangLocation: data.Gudang.Location,
