@@ -63,11 +63,43 @@ func (usecase *userUsecase) PutMitra(id int, updateData user.Core) (int, error) 
 	return 1, nil
 }
 
-// func (usecase *userUsecase) DeleteUser(id int, admin string, client string) (int, error) {
-// 	row, err := usecase.userData.DeleteData(id, admin, client)
-// 	if err != nil || row < 1 {
-// 		return -1, err
-// 	}
+func (usecase *userUsecase) DeleteMitra(id int) (int, error) {
+	row, err := usecase.userData.DeleteData(id)
+	if err != nil || row < 1 {
+		return -1, err
+	}
 
-// 	return 1, nil
-// }
+	return 1, nil
+}
+
+func (usecase *userUsecase) GetClient(id int) (user.Core, error) {
+	data, err := usecase.userData.SelectClient(id)
+	if err != nil {
+		return user.Core{}, err
+	}
+
+	return data, nil
+}
+
+func (usecase *userUsecase) PutClient(id int, updateData user.Core) (int, error) {
+	passByte := []byte(updateData.Password)
+	hashPass, _ := bcrypt.GenerateFromPassword(passByte, bcrypt.DefaultCost)
+
+	updateData.Password = string(hashPass)
+
+	row, err := usecase.userData.UpdateClient(id, updateData)
+	if err != nil || row < 1 {
+		return -1, err
+	}
+
+	return 1, nil
+}
+
+func (usecase *userUsecase) DeleteClient(id int) (int, error) {
+	row, err := usecase.userData.DeleteClientData(id)
+	if err != nil || row < 1 {
+		return -1, err
+	}
+
+	return 1, nil
+}

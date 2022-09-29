@@ -13,7 +13,6 @@ type UserResponse struct {
 	FileKTP         string `json:"file_ktp,omitempty"`
 	GudangName      string `json:"gudangname,omitempty"`
 	GudangLocation  string `json:"gudanglocation,omitempty"`
-	GudangPhoto     string `json:"gudangphoto,omitempty"`
 	GudangLatitude  string `json:"gudanglatitude,omitempty"`
 	GudangLongitude string `json:"gudanglongitude,omitempty"`
 }
@@ -30,7 +29,6 @@ func fromCore(data user.Core) UserResponse {
 		FileKTP:         data.FileKTP,
 		GudangName:      data.GudangName,
 		GudangLocation:  data.GudangLocation,
-		GudangPhoto:     data.GudangPhoto,
 		GudangLatitude:  data.GudangLatitude,
 		GudangLongitude: data.GudangLongitude,
 	}
