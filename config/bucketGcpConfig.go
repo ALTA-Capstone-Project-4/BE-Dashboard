@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
-	"os"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -26,21 +24,21 @@ type ClientUploader struct {
 
 var Uploader *ClientUploader
 
-func init() {
-	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "") // FILL IN WITH YOUR FILE PATH
-	client, err := storage.NewClient(context.Background())
-	if err != nil {
-		log.Fatalf("Failed to create client: %v", err)
-	}
+// func init() {
+// 	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "") // FILL IN WITH YOUR FILE PATH
+// 	client, err := storage.NewClient(context.Background())
+// 	if err != nil {
+// 		log.Fatalf("Failed to create client: %v", err)
+// 	}
 
-	Uploader = &ClientUploader{
-		cl:         client,
-		bucketName: bucketName,
-		projectID:  projectID,
-		uploadPath: "ktp-files/",
-	}
+// 	Uploader = &ClientUploader{
+// 		cl:         client,
+// 		bucketName: bucketName,
+// 		projectID:  projectID,
+// 		uploadPath: "ktp-files/",
+// 	}
 
-}
+// }
 
 func (c *ClientUploader) UploadFile(file multipart.File, object string) error {
 	ctx := context.Background()

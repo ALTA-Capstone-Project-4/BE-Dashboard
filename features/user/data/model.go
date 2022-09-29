@@ -16,15 +16,17 @@ type User struct {
 	Photo    string
 	FileKTP  string
 	Role     string
-	GudangID int
 	Gudang   Gudang
 }
 
 type Gudang struct {
 	gorm.Model
-	Name     string
-	Location string
-	User     []User
+	Name      string
+	Photo     string
+	Location  string
+	Latitude  string
+	Longitude string
+	UserID    uint
 }
 
 func fromCore(dataCore user.Core) User {
@@ -37,23 +39,24 @@ func fromCore(dataCore user.Core) User {
 		Photo:    dataCore.Photo,
 		FileKTP:  dataCore.FileKTP,
 		Role:     dataCore.Role,
-		GudangID: dataCore.GudangID,
 	}
 	return dataModel
 }
 
 func (data *User) toCore() user.Core {
 	return user.Core{
-		ID:             int(data.ID),
-		Name:           data.Name,
-		Email:          data.Email,
-		Password:       data.Password,
-		Phone:          data.Phone,
-		FileKTP:        data.FileKTP,
-		Address:        data.Address,
-		Photo:          data.Photo,
-		GudangID:       data.GudangID,
-		GudangName:     data.Gudang.Name,
-		GudangLocation: data.Gudang.Location,
+		ID:              int(data.ID),
+		Name:            data.Name,
+		Email:           data.Email,
+		Password:        data.Password,
+		Phone:           data.Phone,
+		FileKTP:         data.FileKTP,
+		Address:         data.Address,
+		Photo:           data.Photo,
+		GudangName:      data.Gudang.Name,
+		GudangLocation:  data.Gudang.Location,
+		GudangPhoto:     data.Gudang.Photo,
+		GudangLatitude:  data.Gudang.Latitude,
+		GudangLongitude: data.Gudang.Longitude,
 	}
 }
