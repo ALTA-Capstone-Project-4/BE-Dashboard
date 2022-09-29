@@ -30,14 +30,17 @@ type Gudang struct {
 
 type UsecaseInterface interface {
 	PostUser(data Core) (int, error)
+	GetMitraByAdmin(id int) (Core, error)
 	GetMitra(id int) (Core, error)
-	// PutUser(id int, data Core) (int, error)
+	PutMitra(id int, data Core) (int, error)
 	// DeleteUser(id int, admin string, client string) (int, error)
 }
 
 type DataInterface interface {
 	AddUser(data Core) (int, error)
+	SelectMitraByAdmin(id int) (Core, error)
 	SelectMitra(id int) (Core, error)
+	UpdateMitra(id int, data Core) (int, error)
 	// UpdateUser(id int, data Core) (int, error)
 	// DeleteData(id int, admin string, client string) (int, error)
 }
