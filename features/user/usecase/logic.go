@@ -17,7 +17,7 @@ func New(data user.DataInterface) user.UsecaseInterface {
 }
 
 func (usecase *userUsecase) PostUser(data user.Core) (int, error) {
-	if data.Name == "" || data.Email == "" || data.Password == "" || data.Phone == "" || data.Address == "" || data.Photo == "" {
+	if data.Name == "" || data.Email == "" || data.Password == "" || data.Phone == "" || data.Address == "" {
 		passByte := []byte(data.Password)
 		hashPass, _ := bcrypt.GenerateFromPassword(passByte, bcrypt.DefaultCost)
 
