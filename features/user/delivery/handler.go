@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 	"warehouse/features/user"
 	"warehouse/middlewares"
 	"warehouse/utils/helper"
@@ -36,23 +37,55 @@ func (delivery *UserDelivery) PostUser(c echo.Context) error {
 	}
 	fmt.Println(userRegister)
 
-	// f, err := c.FormFile("file_ktp")
-	// if err != nil {
-	// 	return c.JSON(400, helper.FailedResponseHelper("error bind ktp file"))
-	// }
+	imageData, imageInfo, imageErr := c.Request().FormFile("file_ktp")
+	fotoData, fotoInfo, fotoErr := c.Request().FormFile("photo")
 
-	// blobFile, err := f.Open()
-	// if err != nil {
-	// 	return c.JSON(400, helper.FailedResponseHelper("error open ktp file"))
-	// }
+	if imageErr == http.ErrMissingFile || imageErr != nil {
+		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get file_ktp"))
+	}
+	if fotoErr == http.ErrMissingFile || fotoErr != nil {
+		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get photo profile"))
+	}
 
-	// err = config.Uploader.UploadFile(blobFile, f.Filename)
-	// if err != nil {
+	imageExtension, err_image_extension := helper.CheckFileExtension(imageInfo.Filename)
+	if err_image_extension != nil {
+		return c.JSON(400, helper.FailedResponseHelper("file_ktp extension error"))
+	}
+	fotoExtension, err_foto_extension := helper.CheckFileExtension(fotoInfo.Filename)
+	if err_foto_extension != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile extension error"))
+	}
 
-	// 	return c.JSON(500, helper.FailedResponseHelper(err.Error()))
-	// }
+	err_file_size := helper.CheckFileSize(imageInfo.Size)
+	if err_file_size != nil {
+		return c.JSON(400, helper.FailedResponseHelper("file_ktp size error"))
+	}
+	err_foto_size := helper.CheckFileSize(fotoInfo.Size)
+	if err_foto_size != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile size error"))
+	}
 
-	row, err := delivery.userUsecase.PostUser(toCore(userRegister))
+	id, _, _ := middlewares.ExtractToken(c)
+	imageName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + imageExtension
+	fotoName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + fotoExtension
+
+	image, errUploadImg := helper.UploadFileToS3("ktpimage", imageName, "images", imageData)
+	foto, errUploadFoto := helper.UploadFileToS3("fotoprofileimage", fotoName, "images", fotoData)
+
+	if errUploadImg != nil {
+		fmt.Println(errUploadImg)
+		return c.JSON(400, helper.FailedResponseHelper("failed to upload file_ktp"))
+	}
+	if errUploadFoto != nil {
+		fmt.Println(errUploadFoto)
+		return c.JSON(400, helper.FailedResponseHelper("failed to upload photo profile"))
+	}
+
+	eventCore := toCore(userRegister)
+	eventCore.FileKTP = image
+	eventCore.Photo = foto
+
+	row, err := delivery.userUsecase.PostUser(eventCore)
 	if err != nil {
 		return c.JSON(500, helper.FailedResponseHelper("error insert data"))
 	}
