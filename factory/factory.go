@@ -11,6 +11,10 @@ import (
 	userData "warehouse/features/user/data"
 	userDelivery "warehouse/features/user/delivery"
 	userUsecase "warehouse/features/user/usecase"
+
+	gudangData "warehouse/features/gudang/data"
+	gudangDelivery "warehouse/features/gudang/delivery"
+	gudangUsecase "warehouse/features/gudang/usecase"
 )
 
 func InitFactory(e *echo.Echo, db *gorm.DB) {
@@ -21,4 +25,8 @@ func InitFactory(e *echo.Echo, db *gorm.DB) {
 	userDataFactory := userData.New(db)
 	userUsecaseFactory := userUsecase.New(userDataFactory)
 	userDelivery.New(e, userUsecaseFactory)
+
+	gudangDataFactory := gudangData.New(db)
+	gudangUsecaseFactory := gudangUsecase.New(gudangDataFactory)
+	gudangDelivery.New(e, gudangUsecaseFactory)
 }

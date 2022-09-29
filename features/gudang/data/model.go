@@ -9,20 +9,32 @@ import (
 type Gudang struct {
 	gorm.Model
 	Name      string
-	Photo     string
 	Latitude  string
 	Longitude string
 	Location  string
 	UserID    uint
 }
 
+type User struct {
+	gorm.Model
+	Name     string
+	Email    string
+	Password string
+	Phone    string
+	Address  string
+	Photo    string
+	FileKTP  string
+	Role     string
+	Gudang   Gudang
+}
+
 func fromCore(dataCore gudang.Core) Gudang {
 	dataModel := Gudang{
 		Name:      dataCore.Name,
-		Photo:     dataCore.Photo,
 		Latitude:  dataCore.Latitude,
 		Longitude: dataCore.Longitude,
 		Location:  dataCore.Location,
+		UserID:    dataCore.UserID,
 	}
 	return dataModel
 }
@@ -31,9 +43,9 @@ func (data *Gudang) toCore() gudang.Core {
 	return gudang.Core{
 		ID:        int(data.ID),
 		Name:      data.Name,
-		Photo:     data.Photo,
 		Latitude:  data.Latitude,
 		Longitude: data.Longitude,
 		Location:  data.Location,
+		UserID:    data.UserID,
 	}
 }

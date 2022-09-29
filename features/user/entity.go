@@ -33,7 +33,10 @@ type UsecaseInterface interface {
 	GetMitraByAdmin(id int) (Core, error)
 	GetMitra(id int) (Core, error)
 	PutMitra(id int, data Core) (int, error)
-	// DeleteUser(id int, admin string, client string) (int, error)
+	DeleteMitra(id int) (int, error)
+	GetClient(id int) (Core, error)
+	PutClient(id int, data Core) (int, error)
+	DeleteClient(id int) (int, error)
 }
 
 type DataInterface interface {
@@ -41,6 +44,8 @@ type DataInterface interface {
 	SelectMitraByAdmin(id int) (Core, error)
 	SelectMitra(id int) (Core, error)
 	UpdateMitra(id int, data Core) (int, error)
-	// UpdateUser(id int, data Core) (int, error)
-	// DeleteData(id int, admin string, client string) (int, error)
+	DeleteData(id int) (int, error)
+	SelectClient(id int) (Core, error)
+	UpdateClient(id int, data Core) (int, error)
+	DeleteClientData(id int) (int, error)
 }

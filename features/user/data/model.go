@@ -22,7 +22,6 @@ type User struct {
 type Gudang struct {
 	gorm.Model
 	Name      string
-	Photo     string
 	Location  string
 	Latitude  string
 	Longitude string
@@ -55,7 +54,6 @@ func (data *User) toCore() user.Core {
 		Photo:           data.Photo,
 		GudangName:      data.Gudang.Name,
 		GudangLocation:  data.Gudang.Location,
-		GudangPhoto:     data.Gudang.Photo,
 		GudangLatitude:  data.Gudang.Latitude,
 		GudangLongitude: data.Gudang.Longitude,
 	}

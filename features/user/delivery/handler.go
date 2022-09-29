@@ -25,7 +25,10 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 	e.GET("/mitra/:id", handler.GetMitraByAdmin, middlewares.JWTMiddleware())
 	e.GET("/mitra", handler.GetMitra, middlewares.JWTMiddleware())
 	e.PUT("/mitra", handler.PutMitra, middlewares.JWTMiddleware())
-	// e.DELETE("/users/:id", handler.DeleteUser, middlewares.JWTMiddleware())
+	e.DELETE("/mitra/:id", handler.DeleteMitra, middlewares.JWTMiddleware())
+	e.GET("/penitip", handler.GetClient, middlewares.JWTMiddleware())
+	e.PUT("/penitip", handler.PutClient, middlewares.JWTMiddleware())
+	e.DELETE("/penitip", handler.DeleteClient, middlewares.JWTMiddleware())
 }
 
 func (delivery *UserDelivery) PostUser(c echo.Context) error {
@@ -38,52 +41,33 @@ func (delivery *UserDelivery) PostUser(c echo.Context) error {
 	fmt.Println(userRegister)
 
 	imageData, imageInfo, imageErr := c.Request().FormFile("file_ktp")
-	fotoData, fotoInfo, fotoErr := c.Request().FormFile("photo")
 
 	if imageErr == http.ErrMissingFile || imageErr != nil {
 		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get file_ktp"))
-	}
-	if fotoErr == http.ErrMissingFile || fotoErr != nil {
-		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get photo profile"))
 	}
 
 	imageExtension, err_image_extension := helper.CheckFileExtension(imageInfo.Filename)
 	if err_image_extension != nil {
 		return c.JSON(400, helper.FailedResponseHelper("file_ktp extension error"))
 	}
-	fotoExtension, err_foto_extension := helper.CheckFileExtension(fotoInfo.Filename)
-	if err_foto_extension != nil {
-		return c.JSON(400, helper.FailedResponseHelper("photo profile extension error"))
-	}
 
 	err_file_size := helper.CheckFileSize(imageInfo.Size)
 	if err_file_size != nil {
 		return c.JSON(400, helper.FailedResponseHelper("file_ktp size error"))
 	}
-	err_foto_size := helper.CheckFileSize(fotoInfo.Size)
-	if err_foto_size != nil {
-		return c.JSON(400, helper.FailedResponseHelper("photo profile size error"))
-	}
 
 	id, _, _ := middlewares.ExtractToken(c)
 	imageName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + imageExtension
-	fotoName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + fotoExtension
 
 	image, errUploadImg := helper.UploadFileToS3("ktpimage", imageName, "images", imageData)
-	foto, errUploadFoto := helper.UploadFileToS3("fotoprofileimage", fotoName, "images", fotoData)
 
 	if errUploadImg != nil {
 		fmt.Println(errUploadImg)
 		return c.JSON(400, helper.FailedResponseHelper("failed to upload file_ktp"))
 	}
-	if errUploadFoto != nil {
-		fmt.Println(errUploadFoto)
-		return c.JSON(400, helper.FailedResponseHelper("failed to upload photo profile"))
-	}
 
 	eventCore := toCore(userRegister)
 	eventCore.FileKTP = image
-	eventCore.Photo = foto
 
 	row, err := delivery.userUsecase.PostUser(eventCore)
 	if err != nil {
@@ -145,7 +129,36 @@ func (delivery *UserDelivery) PutMitra(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("error bind"))
 	}
 
-	row, err := delivery.userUsecase.PutMitra(token, toCore(dataUpdate))
+	fotoData, fotoInfo, fotoErr := c.Request().FormFile("photo")
+
+	if fotoErr == http.ErrMissingFile || fotoErr != nil {
+		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get photo profile"))
+	}
+
+	fotoExtension, err_foto_extension := helper.CheckFileExtension(fotoInfo.Filename)
+	if err_foto_extension != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile extension error"))
+	}
+
+	err_foto_size := helper.CheckFileSize(fotoInfo.Size)
+	if err_foto_size != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile size error"))
+	}
+
+	id, _, _ := middlewares.ExtractToken(c)
+	fotoName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + fotoExtension
+
+	foto, errUploadFoto := helper.UploadFileToS3("fotoprofileimage", fotoName, "images", fotoData)
+
+	if errUploadFoto != nil {
+		fmt.Println(errUploadFoto)
+		return c.JSON(400, helper.FailedResponseHelper("failed to upload photo profile"))
+	}
+
+	eventCore := toCore(dataUpdate)
+	eventCore.Photo = foto
+
+	row, err := delivery.userUsecase.PutMitra(token, eventCore)
 	if err != nil {
 		return c.JSON(500, helper.FailedResponseHelper("error update data"))
 	}
@@ -156,29 +169,109 @@ func (delivery *UserDelivery) PutMitra(c echo.Context) error {
 	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
 }
 
-// func (delivery *UserDelivery) DeleteUser(c echo.Context) error {
-// 	_, role, errToken := middlewares.ExtractToken(c)
+func (delivery *UserDelivery) DeleteClient(c echo.Context) error {
+	token, _, errToken := middlewares.ExtractToken(c)
 
-// 	if role == "mitra" {
-// 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
-// 	}
-// 	if errToken != nil {
-// 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
-// 	}
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
 
-// 	id := c.Param("id")
-// 	idCnv, errId := strconv.Atoi(id)
-// 	if errId != nil {
-// 		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
-// 	}
+	row, err := delivery.userUsecase.DeleteClient(token)
+	if err != nil || row != 1 {
+		return c.JSON(400, helper.FailedResponseHelper("failed delete"))
+	}
 
-// 	query := c.QueryParam("admin")
-// 	query1 := c.QueryParam("client")
+	return c.JSON(200, helper.SuccessResponseHelper("success delete"))
+}
 
-// 	row, err := delivery.userUsecase.DeleteUser(idCnv, query, query1)
-// 	if err != nil || row != 1 {
-// 		return c.JSON(400, helper.FailedResponseHelper("failed delete"))
-// 	}
-// 	return c.JSON(200, helper.SuccessResponseHelper("success delete"))
+func (delivery *UserDelivery) GetClient(c echo.Context) error {
+	id, _, errToken := middlewares.ExtractToken(c)
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
 
-// }
+	data, err := delivery.userUsecase.GetClient(id)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error get data"))
+	}
+
+	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCore(data)))
+
+}
+
+func (delivery *UserDelivery) PutClient(c echo.Context) error {
+	token, _, errToken := middlewares.ExtractToken(c)
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	var dataUpdate UserRequest
+
+	errBind := c.Bind(&dataUpdate)
+	if errBind != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+	}
+
+	fotoData, fotoInfo, fotoErr := c.Request().FormFile("photo")
+
+	if fotoErr == http.ErrMissingFile || fotoErr != nil {
+		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get photo profile"))
+	}
+
+	fotoExtension, err_foto_extension := helper.CheckFileExtension(fotoInfo.Filename)
+	if err_foto_extension != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile extension error"))
+	}
+
+	err_foto_size := helper.CheckFileSize(fotoInfo.Size)
+	if err_foto_size != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile size error"))
+	}
+
+	id, _, _ := middlewares.ExtractToken(c)
+	fotoName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + fotoExtension
+
+	foto, errUploadFoto := helper.UploadFileToS3("fotoprofileimage", fotoName, "images", fotoData)
+
+	if errUploadFoto != nil {
+		fmt.Println(errUploadFoto)
+		return c.JSON(400, helper.FailedResponseHelper("failed to upload photo profile"))
+	}
+
+	eventCore := toCore(dataUpdate)
+	eventCore.Photo = foto
+
+	row, err := delivery.userUsecase.PutClient(token, eventCore)
+	if err != nil {
+		return c.JSON(500, helper.FailedResponseHelper("error update data"))
+	}
+	if row != 1 {
+		return c.JSON(500, helper.FailedResponseHelper("error update data"))
+	}
+	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
+
+}
+
+func (delivery *UserDelivery) DeleteMitra(c echo.Context) error {
+	_, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "admin" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
+	}
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	id := c.Param("id")
+	idCnv, errId := strconv.Atoi(id)
+	if errId != nil {
+		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
+	}
+
+	row, err := delivery.userUsecase.DeleteMitra(idCnv)
+	if err != nil || row != 1 {
+		return c.JSON(400, helper.FailedResponseHelper("failed delete"))
+	}
+
+	return c.JSON(200, helper.SuccessResponseHelper("success delete"))
+}
