@@ -35,3 +35,14 @@ func fromCore(data user.Core) UserResponse {
 		GudangLongitude: data.GudangLongitude,
 	}
 }
+
+func fromCoreList(data []user.Core) []UserResponse {
+
+	var dataRes []UserResponse
+	for _, v := range data {
+		dataRes = append(dataRes, fromCore(v))
+	}
+
+	return dataRes
+
+}
