@@ -16,6 +16,7 @@ type User struct {
 	Photo    string
 	FileKTP  string
 	Role     string
+	Status   string
 	Gudang   Gudang
 }
 
@@ -38,6 +39,7 @@ func fromCore(dataCore user.Core) User {
 		Photo:    dataCore.Photo,
 		FileKTP:  dataCore.FileKTP,
 		Role:     dataCore.Role,
+		Status:   dataCore.Status,
 	}
 	return dataModel
 }
@@ -52,6 +54,7 @@ func (data *User) toCore() user.Core {
 		FileKTP:         data.FileKTP,
 		Address:         data.Address,
 		Photo:           data.Photo,
+		Status:          data.Status,
 		GudangName:      data.Gudang.Name,
 		GudangLocation:  data.Gudang.Location,
 		GudangLatitude:  data.Gudang.Latitude,

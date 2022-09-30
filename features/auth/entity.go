@@ -5,6 +5,7 @@ type Core struct {
 	Email    string
 	Password string
 	Role     string
+	Status   string
 }
 
 type UsecaseInterface interface {

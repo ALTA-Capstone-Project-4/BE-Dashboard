@@ -45,6 +45,7 @@ func ExtractToken(c echo.Context) (int, string, error) {
 		claims := datajwt.Claims.(jwt.MapClaims)
 		userId := claims["userId"].(float64)
 		role := claims["role"].(string)
+
 		return int(userId), role, nil
 	}
 

@@ -9,6 +9,7 @@ type Core struct {
 	Address         string
 	FileKTP         string
 	Role            string
+	Status          string
 	Photo           string
 	GudangID        int
 	GudangName      string
