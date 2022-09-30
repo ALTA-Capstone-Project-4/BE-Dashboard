@@ -35,6 +35,25 @@ func (repo *userData) SelectMitraUnverif() ([]user.Core, error) {
 	return toCoreList(data), nil
 }
 
+func (repo *userData) UpdateVerify(id int, status user.Core) (int, error) {
+	dataModel := fromCore(status)
+
+	tx := repo.db.Model(&User{}).Where("id = ? AND status = ?", id, "unverified").Updates(dataModel)
+	if tx.Error != nil {
+		return -1, tx.Error
+	}
+	return 1, nil
+}
+
+func (repo *userData) SelectMitraVerified() ([]user.Core, error) {
+	var data []User
+	tx := repo.db.Model(&User{}).Where("status = ?", "verified").Find(&data)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return toCoreList(data), nil
+}
+
 func (repo *userData) SelectMitraByAdmin(id int) (user.Core, error) {
 	var data User
 
