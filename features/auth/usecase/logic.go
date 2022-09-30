@@ -22,6 +22,12 @@ func (usecase *authUsecase) LoginAuthorized(email, password string) (string, str
 		return "please input email and password", ""
 	}
 
+	var cek auth.Core
+	if cek.Role == "mitra" && cek.Status != "verified" {
+		return "your account unverified", ""
+
+	}
+
 	result, errEmail := usecase.authData.LoginUser(email)
 	if errEmail != nil {
 		return "email not found", ""
@@ -32,11 +38,6 @@ func (usecase *authUsecase) LoginAuthorized(email, password string) (string, str
 		return "wrong password", ""
 	}
 
-	var status auth.Core
-	if status.Status != "unverified" {
-		return "your account unverified", ""
-	}
-
 	token, errToken := middlewares.CreateToken(int(result.ID), result.Role)
 
 	if errToken != nil {
@@ -44,4 +45,5 @@ func (usecase *authUsecase) LoginAuthorized(email, password string) (string, str
 	}
 
 	return token, result.Role
+
 }
