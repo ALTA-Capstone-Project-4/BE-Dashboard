@@ -28,3 +28,13 @@ func (repo *gudangData) UpdateGudang(id int, data gudang.Core) (int, error) {
 	}
 	return 1, nil
 }
+
+func (repo *gudangData) SelectAllGudang() ([]gudang.Core, error) {
+	var dataGudang []Gudang
+
+	tx := repo.db.Model(&Gudang{}).Find(&dataGudang)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return toCoreList(dataGudang), nil
+}

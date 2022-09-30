@@ -23,8 +23,10 @@ type User struct {
 
 type UsecaseInterface interface {
 	PutGudang(id int, data Core) (int, error)
+	GetAllGudang() ([]Core, error)
 }
 
 type DataInterface interface {
 	UpdateGudang(id int, data Core) (int, error)
+	SelectAllGudang() ([]Core, error)
 }

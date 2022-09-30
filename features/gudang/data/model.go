@@ -49,3 +49,11 @@ func (data *Gudang) toCore() gudang.Core {
 		UserID:    data.UserID,
 	}
 }
+
+func toCoreList(data []Gudang) []gudang.Core {
+	var dataCore []gudang.Core
+	for key := range data {
+		dataCore = append(dataCore, data[key].toCore())
+	}
+	return dataCore
+}
