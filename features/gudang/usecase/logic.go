@@ -15,6 +15,7 @@ func New(data gudang.DataInterface) gudang.UsecaseInterface {
 }
 
 func (usecase *gudangUsecase) PutGudang(id int, data gudang.Core) (int, error) {
+
 	row, err := usecase.gudangData.UpdateGudang(id, data)
 	if err != nil || row < 1 {
 		return -1, err

@@ -18,9 +18,13 @@ func New(db *gorm.DB) gudang.DataInterface {
 
 func (repo *gudangData) UpdateGudang(id int, data gudang.Core) (int, error) {
 	dataModel := fromCore(data)
-	tx := repo.db.Model(&Gudang{}).Where("user_id = ?", id).Updates(dataModel)
-	if tx.Error != nil {
-		return -1, tx.Error
+
+	if data.ID == id {
+		tx := repo.db.Model(&Gudang{}).Updates(dataModel)
+		if tx.Error != nil {
+			return -1, tx.Error
+		}
+		return 1, nil
 	}
 	return 1, nil
 }
