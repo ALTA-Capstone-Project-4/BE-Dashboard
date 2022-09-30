@@ -22,7 +22,9 @@ func New(e *echo.Echo, usecase user.UsecaseInterface) {
 	}
 
 	e.POST("/register", handler.PostUser)
-	e.GET("/mitra/request", handler.GetMitraUnverif, middlewares.JWTMiddleware())
+	e.GET("/mitra/unverify", handler.GetMitraUnverif, middlewares.JWTMiddleware())
+	e.PUT("/mitra/verify/:id", handler.PutVerify, middlewares.JWTMiddleware())
+	e.GET("/mitra/verified", handler.GetMitraVerified, middlewares.JWTMiddleware())
 	e.GET("/mitra/:id", handler.GetMitraByAdmin, middlewares.JWTMiddleware())
 	e.GET("/mitra", handler.GetMitra, middlewares.JWTMiddleware())
 	e.PUT("/mitra", handler.PutMitra, middlewares.JWTMiddleware())
@@ -112,6 +114,55 @@ func (delivery *UserDelivery) GetMitraUnverif(c echo.Context) error {
 	}
 
 	data, err := delivery.userUsecase.GetMitraUnverif()
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error get data"))
+	}
+
+	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCoreList(data)))
+}
+
+func (delivery *UserDelivery) PutVerify(c echo.Context) error {
+	_, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "admin" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
+	}
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	id := c.Param("id")
+	idCnv, _ := strconv.Atoi(id)
+
+	var verify UserRequest
+	errBind := c.Bind(&verify)
+	if errBind != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+	}
+
+	row, err := delivery.userUsecase.PutVerify(idCnv, toCore(verify))
+	if err != nil {
+		return c.JSON(500, helper.FailedResponseHelper("error verify data"))
+	}
+	if row != 1 {
+		return c.JSON(500, helper.FailedResponseHelper("error verify data"))
+	}
+
+	return c.JSON(201, helper.SuccessResponseHelper("success verify data"))
+
+}
+
+func (delivery *UserDelivery) GetMitraVerified(c echo.Context) error {
+	_, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "admin" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
+	}
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	data, err := delivery.userUsecase.GetMitraVerified()
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper("error get data"))
 	}

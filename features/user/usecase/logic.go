@@ -40,6 +40,25 @@ func (usecase *userUsecase) GetMitraUnverif() ([]user.Core, error) {
 	return data, nil
 }
 
+func (usecase *userUsecase) PutVerify(id int, status user.Core) (int, error) {
+	row, err := usecase.userData.UpdateVerify(id, status)
+	if err != nil || row < 1 {
+		return -1, err
+
+	}
+
+	return 1, nil
+}
+
+func (usecase *userUsecase) GetMitraVerified() ([]user.Core, error) {
+	data, err := usecase.userData.SelectMitraVerified()
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func (usecase *userUsecase) GetMitraByAdmin(id int) (user.Core, error) {
 	data, err := usecase.userData.SelectMitraByAdmin(id)
 	if err != nil {
