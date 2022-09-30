@@ -187,15 +187,20 @@ func (delivery *UserDelivery) GetMitraByAdmin(c echo.Context) error {
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper("error get data"))
 	}
-
+	if data.ID == 0 {
+		return c.JSON(400, helper.FailedResponseHelper("there is no data mitra"))
+	}
 	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCore(data)))
 }
 
 func (delivery *UserDelivery) GetMitra(c echo.Context) error {
-	token, _, errToken := middlewares.ExtractToken(c)
+	token, role, errToken := middlewares.ExtractToken(c)
 
 	if errToken != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+	if role == "penitip" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unauthorized"))
 	}
 
 	data, err := delivery.userUsecase.GetMitra(token)
@@ -259,14 +264,23 @@ func (delivery *UserDelivery) PutMitra(c echo.Context) error {
 	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
 }
 
-func (delivery *UserDelivery) DeleteClient(c echo.Context) error {
-	token, _, errToken := middlewares.ExtractToken(c)
+func (delivery *UserDelivery) DeleteMitra(c echo.Context) error {
+	_, role, errToken := middlewares.ExtractToken(c)
 
+	if role != "admin" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
+	}
 	if errToken != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
 	}
 
-	row, err := delivery.userUsecase.DeleteClient(token)
+	id := c.Param("id")
+	idCnv, errId := strconv.Atoi(id)
+	if errId != nil {
+		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
+	}
+
+	row, err := delivery.userUsecase.DeleteMitra(idCnv)
 	if err != nil || row != 1 {
 		return c.JSON(400, helper.FailedResponseHelper("failed delete"))
 	}
@@ -275,9 +289,12 @@ func (delivery *UserDelivery) DeleteClient(c echo.Context) error {
 }
 
 func (delivery *UserDelivery) GetClient(c echo.Context) error {
-	id, _, errToken := middlewares.ExtractToken(c)
+	id, role, errToken := middlewares.ExtractToken(c)
 	if errToken != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+	if role != "penitip" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unauthorized"))
 	}
 
 	data, err := delivery.userUsecase.GetClient(id)
@@ -342,23 +359,17 @@ func (delivery *UserDelivery) PutClient(c echo.Context) error {
 
 }
 
-func (delivery *UserDelivery) DeleteMitra(c echo.Context) error {
-	_, role, errToken := middlewares.ExtractToken(c)
+func (delivery *UserDelivery) DeleteClient(c echo.Context) error {
+	token, role, errToken := middlewares.ExtractToken(c)
 
-	if role != "admin" {
-		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
-	}
 	if errToken != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
 	}
-
-	id := c.Param("id")
-	idCnv, errId := strconv.Atoi(id)
-	if errId != nil {
-		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
+	if role != "penitip" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unauthorized"))
 	}
 
-	row, err := delivery.userUsecase.DeleteMitra(idCnv)
+	row, err := delivery.userUsecase.DeleteClient(token)
 	if err != nil || row != 1 {
 		return c.JSON(400, helper.FailedResponseHelper("failed delete"))
 	}

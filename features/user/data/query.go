@@ -68,7 +68,7 @@ func (repo *userData) SelectMitraByAdmin(id int) (user.Core, error) {
 func (repo *userData) SelectMitra(id int) (user.Core, error) {
 	var data User
 
-	tx := repo.db.Where("id = ?", id).Preload("Gudang").Find(&data)
+	tx := repo.db.Where("id = ? AND role = ?", id, "mitra").Preload("Gudang").Find(&data)
 	if tx.Error != nil {
 		return user.Core{}, tx.Error
 	}
@@ -99,7 +99,7 @@ func (repo *userData) DeleteData(id int) (int, error) {
 func (repo *userData) SelectClient(id int) (user.Core, error) {
 	var data User
 
-	tx := repo.db.Where("id = ?", id).Find(&data)
+	tx := repo.db.Where("id = ? AND role = ?", id, "penitip").Find(&data)
 	if tx.Error != nil {
 		return user.Core{}, tx.Error
 	}
