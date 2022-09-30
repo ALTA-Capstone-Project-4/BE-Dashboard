@@ -61,3 +61,11 @@ func (data *User) toCore() user.Core {
 		GudangLongitude: data.Gudang.Longitude,
 	}
 }
+
+func toCoreList(data []User) []user.Core {
+	var dataCore []user.Core
+	for key := range data {
+		dataCore = append(dataCore, data[key].toCore())
+	}
+	return dataCore
+}

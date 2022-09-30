@@ -26,6 +26,15 @@ func (repo *userData) AddUser(data user.Core) (int, error) {
 	return int(tx.RowsAffected), nil
 }
 
+func (repo *userData) SelectMitraUnverif() ([]user.Core, error) {
+	var data []User
+	tx := repo.db.Model(&User{}).Where("status = ?", "unverified").Find(&data)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return toCoreList(data), nil
+}
+
 func (repo *userData) SelectMitraByAdmin(id int) (user.Core, error) {
 	var data User
 

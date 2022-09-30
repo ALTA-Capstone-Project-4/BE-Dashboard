@@ -31,6 +31,15 @@ func (usecase *userUsecase) PostUser(data user.Core) (int, error) {
 	return row, nil
 }
 
+func (usecase *userUsecase) GetMitraUnverif() ([]user.Core, error) {
+	data, err := usecase.userData.SelectMitraUnverif()
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func (usecase *userUsecase) GetMitraByAdmin(id int) (user.Core, error) {
 	data, err := usecase.userData.SelectMitraByAdmin(id)
 	if err != nil {
