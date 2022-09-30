@@ -40,11 +40,11 @@ func (delivery *UserDelivery) PostUser(c echo.Context) error {
 	}
 	fmt.Println(userRegister)
 
-	if userRegister.Status == "" {
+	if userRegister.Role == "mitra" && userRegister.Status == "" {
 		userRegister.Status = "unverified"
 	}
 
-	if userRegister.Role == "penitip" {
+	if userRegister.Role == "penitip" || userRegister.Role == "admin" {
 		userRegister.FileKTP = ""
 
 	} else {

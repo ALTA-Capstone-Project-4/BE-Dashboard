@@ -12,6 +12,7 @@ type User struct {
 	Email    string `json:"email" form:"email"`
 	Password string `json:"password" form:"password"`
 	Role     string `json:"role" form:"role"`
+	Status   string `json:"status" form:"status"`
 }
 
 func toCore(user User) auth.Core {
@@ -20,6 +21,7 @@ func toCore(user User) auth.Core {
 		Email:    user.Email,
 		Password: user.Password,
 		Role:     user.Role,
+		Status:   user.Status,
 	}
 
 	fmt.Println(core.ID)
