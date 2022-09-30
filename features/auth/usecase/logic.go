@@ -32,6 +32,11 @@ func (usecase *authUsecase) LoginAuthorized(email, password string) (string, str
 		return "wrong password", ""
 	}
 
+	var status auth.Core
+	if status.Status != "unverified" {
+		return "your account unverified", ""
+	}
+
 	token, errToken := middlewares.CreateToken(int(result.ID), result.Role)
 
 	if errToken != nil {
@@ -39,5 +44,4 @@ func (usecase *authUsecase) LoginAuthorized(email, password string) (string, str
 	}
 
 	return token, result.Role
-
 }

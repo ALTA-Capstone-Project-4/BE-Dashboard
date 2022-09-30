@@ -10,6 +10,7 @@ type UserRequest struct {
 	Address  string `json:"address" form:"address"`
 	Photo    string `json:"photo" form:"photo"`
 	Role     string `json:"role" form:"role"`
+	Status   string `json:"status" form:"status"`
 	FileKTP  string `json:"file_ktp" form:"file_ktp"`
 }
 
@@ -22,6 +23,7 @@ func toCore(data UserRequest) user.Core {
 		Address:  data.Address,
 		Photo:    data.Photo,
 		Role:     data.Role,
+		Status:   data.Status,
 		FileKTP:  data.FileKTP,
 	}
 }
