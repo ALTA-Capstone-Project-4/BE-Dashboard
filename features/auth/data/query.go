@@ -29,6 +29,7 @@ func (repo *authData) LoginUser(email string) (auth.Core, error) {
 		}
 
 		return toCore(data), nil
+
 	} else {
 		txMitra := repo.db.Where("email = ?", email).First(&data)
 		if txMitra.Error != nil {
