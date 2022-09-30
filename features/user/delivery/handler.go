@@ -40,36 +40,52 @@ func (delivery *UserDelivery) PostUser(c echo.Context) error {
 	}
 	fmt.Println(userRegister)
 
-	imageData, imageInfo, imageErr := c.Request().FormFile("file_ktp")
+	if userRegister.Role == "penitip" {
+		userRegister.FileKTP = ""
 
-	if imageErr == http.ErrMissingFile || imageErr != nil {
-		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get file_ktp"))
+	} else {
+
+		imageData, imageInfo, imageErr := c.Request().FormFile("file_ktp")
+
+		if imageErr == http.ErrMissingFile || imageErr != nil {
+			return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get file_ktp"))
+		}
+
+		imageExtension, err_image_extension := helper.CheckFileExtension(imageInfo.Filename)
+		if err_image_extension != nil {
+			return c.JSON(400, helper.FailedResponseHelper("file_ktp extension error"))
+		}
+
+		err_file_size := helper.CheckFileSize(imageInfo.Size)
+		if err_file_size != nil {
+			return c.JSON(400, helper.FailedResponseHelper("file_ktp size error"))
+		}
+
+		id, _, _ := middlewares.ExtractToken(c)
+		imageName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + imageExtension
+
+		image, errUploadImg := helper.UploadFileToS3("ktpimage", imageName, "images", imageData)
+
+		if errUploadImg != nil {
+			fmt.Println(errUploadImg)
+			return c.JSON(400, helper.FailedResponseHelper("failed to upload file_ktp"))
+		}
+
+		eventCore := toCore(userRegister)
+		eventCore.FileKTP = image
+
+		row, err := delivery.userUsecase.PostUser(eventCore)
+		if err != nil {
+			return c.JSON(500, helper.FailedResponseHelper("error insert data"))
+		}
+		if row != 1 {
+			return c.JSON(500, helper.FailedResponseHelper("error insert data"))
+		}
+
+		return c.JSON(201, helper.SuccessResponseHelper("success insert data"))
 	}
 
-	imageExtension, err_image_extension := helper.CheckFileExtension(imageInfo.Filename)
-	if err_image_extension != nil {
-		return c.JSON(400, helper.FailedResponseHelper("file_ktp extension error"))
-	}
-
-	err_file_size := helper.CheckFileSize(imageInfo.Size)
-	if err_file_size != nil {
-		return c.JSON(400, helper.FailedResponseHelper("file_ktp size error"))
-	}
-
-	id, _, _ := middlewares.ExtractToken(c)
-	imageName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + imageExtension
-
-	image, errUploadImg := helper.UploadFileToS3("ktpimage", imageName, "images", imageData)
-
-	if errUploadImg != nil {
-		fmt.Println(errUploadImg)
-		return c.JSON(400, helper.FailedResponseHelper("failed to upload file_ktp"))
-	}
-
-	eventCore := toCore(userRegister)
-	eventCore.FileKTP = image
-
-	row, err := delivery.userUsecase.PostUser(eventCore)
+	row, err := delivery.userUsecase.PostUser(toCore(userRegister))
 	if err != nil {
 		return c.JSON(500, helper.FailedResponseHelper("error insert data"))
 	}
