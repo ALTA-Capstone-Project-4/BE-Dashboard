@@ -18,6 +18,7 @@ func New(e *echo.Echo, usecase gudang.UsecaseInterface) {
 	}
 
 	e.PUT("/gudang", handler.PutGudang, middlewares.JWTMiddleware())
+	e.GET("/gudang", handler.GetAllGudang, middlewares.JWTMiddleware())
 
 }
 
@@ -46,4 +47,13 @@ func (delivery *GudangDelivery) PutGudang(c echo.Context) error {
 		return c.JSON(500, helper.FailedResponseHelper("error update data"))
 	}
 	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
+}
+
+func (delivery *GudangDelivery) GetAllGudang(c echo.Context) error {
+	data, err := delivery.gudangUsecase.GetAllGudang()
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error get data"))
+	}
+
+	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCoreList(data)))
 }
