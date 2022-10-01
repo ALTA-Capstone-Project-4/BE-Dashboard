@@ -38,3 +38,14 @@ func (repo *gudangData) SelectAllGudang() ([]gudang.Core, error) {
 	}
 	return toCoreList(dataGudang), nil
 }
+
+func (repo *gudangData) CreatGudang(data gudang.Core) (int, error) {
+	dataModel := fromCore(data)
+
+	tx := repo.db.Create(&dataModel)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return int(tx.RowsAffected), nil
+}
