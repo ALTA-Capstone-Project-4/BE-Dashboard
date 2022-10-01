@@ -119,8 +119,8 @@ func (usecase *userUsecase) PutClient(id int, updateData user.Core) (int, error)
 	if err != nil || row < 1 {
 		return -1, err
 	}
-
 	return 1, nil
+
 }
 
 func (usecase *userUsecase) DeleteClient(id int) (int, error) {
