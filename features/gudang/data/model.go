@@ -13,6 +13,7 @@ type Gudang struct {
 	Longitude string
 	Location  string
 	UserID    uint
+	Lahan     Lahan
 }
 
 type User struct {
@@ -26,6 +27,20 @@ type User struct {
 	FileKTP  string
 	Role     string
 	Gudang   Gudang
+}
+
+type Lahan struct {
+	gorm.Model
+	Nama                 string
+	Luas                 string
+	Panjang              string
+	Lebar                string
+	Harga                int
+	Deskripsi            string
+	Fasilitas            string
+	Barang_Tdk_Diizinkan string
+	FotoLahan            string
+	GudangID             uint
 }
 
 func fromCore(dataCore gudang.Core) Gudang {
