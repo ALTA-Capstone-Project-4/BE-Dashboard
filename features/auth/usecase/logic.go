@@ -38,7 +38,7 @@ func (usecase *authUsecase) LoginAuthorized(email, password string) (string, str
 		return "error to created token", ""
 	}
 
-	if result.Status != "verified" {
+	if result.Status == "unverified" {
 		return "your account unverified", ""
 	}
 
