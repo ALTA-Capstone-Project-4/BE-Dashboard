@@ -28,6 +28,7 @@ type Gudang struct {
 	Longitude string
 	Location  string
 	UserID    uint
+	Lahan     []Lahan
 }
 
 func fromCore(dataCore lahan.Core) Lahan {

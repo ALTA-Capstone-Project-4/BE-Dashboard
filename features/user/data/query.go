@@ -109,9 +109,13 @@ func (repo *userData) SelectClient(id int) (user.Core, error) {
 
 func (repo *userData) UpdateClient(id int, updateData user.Core) (int, error) {
 	dataModel := fromCore(updateData)
-	tx := repo.db.Model(&User{}).Where("id = ?", id).Updates(dataModel)
-	if tx.Error != nil {
-		return -1, tx.Error
+
+	if dataModel.Photo == "" || dataModel.Photo != "" {
+		tx := repo.db.Model(&User{}).Where("id = ?", id).Updates(dataModel)
+		if tx.Error != nil {
+			return -1, tx.Error
+		}
+		return 1, nil
 	}
 	return 1, nil
 }
