@@ -4,7 +4,7 @@ import "warehouse/features/gudang"
 
 type GudangRequest struct {
 	Name      string `json:"name" form:"name"`
-	Location  string `json:"location" form:"location"`
+	Location  string `json:"address" form:"address"`
 	Latitude  string `json:"latitude" form:"latitude"`
 	Longitude string `json:"longitude" form:"longitude"`
 	UserID    int    `json:"user_id" form:"user_id"`

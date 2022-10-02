@@ -7,7 +7,7 @@ import (
 type GudangResponse struct {
 	ID        uint   `json:"id"`
 	Name      string `json:"name,omitempty"`
-	Location  string `json:"location,omitempty"`
+	Location  string `json:"address,omitempty"`
 	Latitude  string `json:"latitude,omitempty"`
 	Longitude string `json:"longitude,omitempty"`
 	UserID    int    `json:"user_id,omitempty"`

@@ -19,6 +19,7 @@ func New(e *echo.Echo, usecase gudang.UsecaseInterface) {
 
 	e.PUT("/gudang", handler.PutGudang, middlewares.JWTMiddleware())
 	e.GET("/gudang", handler.GetAllGudang, middlewares.JWTMiddleware())
+	e.POST("/gudang", handler.PostGudang, middlewares.JWTMiddleware())
 
 }
 
@@ -56,4 +57,30 @@ func (delivery *GudangDelivery) GetAllGudang(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCoreList(data)))
+}
+
+func (delivery *GudangDelivery) PostGudang(c echo.Context) error {
+	id, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "mitra" {
+		return c.JSON(400, helper.FailedResponseHelper("Unauthorized"))
+	}
+	if errToken != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	var dataGudang GudangRequest
+	errBind := c.Bind(&dataGudang)
+	if errBind != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+	}
+
+	dataGudang.UserID = id
+
+	row_postGudang, err_postGudang := delivery.gudangUsecase.PostGudang(toCore(dataGudang))
+
+	if row_postGudang != 1 || err_postGudang != nil {
+		return c.JSON(500, helper.FailedResponseHelper("error add data"))
+	}
+	return c.JSON(201, helper.SuccessResponseHelper("success add data"))
 }

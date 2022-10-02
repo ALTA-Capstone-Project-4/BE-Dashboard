@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"warehouse/features/gudang"
 )
 
@@ -30,4 +31,14 @@ func (usecase *gudangUsecase) GetAllGudang() ([]gudang.Core, error) {
 	}
 
 	return data, nil
+}
+
+func (usecase *gudangUsecase) PostGudang(data gudang.Core) (int, error) {
+	if data.Name == "" || data.Location == "" || data.Latitude == "" || data.Longitude == "" {
+		return -1, errors.New("tidak boleh ada yang dikosongkan")
+	}
+
+	row, err := usecase.gudangData.CreatGudang(data)
+
+	return row, err
 }
