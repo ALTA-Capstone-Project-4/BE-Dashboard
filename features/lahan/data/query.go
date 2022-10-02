@@ -15,3 +15,14 @@ func New(db *gorm.DB) lahan.DataInterface {
 		db: db,
 	}
 }
+
+func (repo *lahanData) CreateLahan(data lahan.Core) (int, error) {
+	dataModel := fromCore(data)
+
+	tx := repo.db.Create(&dataModel)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return int(tx.RowsAffected), nil
+}
