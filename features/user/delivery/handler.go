@@ -68,8 +68,7 @@ func (delivery *UserDelivery) PostUser(c echo.Context) error {
 			return c.JSON(400, helper.FailedResponseHelper("file_ktp size error"))
 		}
 
-		id, _, _ := middlewares.ExtractToken(c)
-		imageName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + imageExtension
+		imageName := time.Now().Format("2006-01-02 15:04:05") + "." + imageExtension
 
 		image, errUploadImg := helper.UploadFileToS3("ktpimage", imageName, "images", imageData)
 
