@@ -69,7 +69,7 @@ func (delivery *LahanDelivery) PostLahan(c echo.Context) error {
 
 	dataLahan.FotoLahan = image
 
-	row_postLahan, err_postLahan := delivery.lahanUsecase.PostLahan(toCore(dataLahan))
+	row_postLahan, err_postLahan := delivery.lahanUsecase.PostLahan(toCore(dataLahan), id)
 
 	if row_postLahan != 1 || err_postLahan != nil {
 		return c.JSON(500, helper.FailedResponseHelper("error add data"))

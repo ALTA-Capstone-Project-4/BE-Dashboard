@@ -1,6 +1,7 @@
 package data
 
 import (
+	modelGudang "warehouse/features/gudang/data"
 	"warehouse/features/lahan"
 
 	"gorm.io/gorm"
@@ -16,7 +17,12 @@ func New(db *gorm.DB) lahan.DataInterface {
 	}
 }
 
-func (repo *lahanData) CreateLahan(data lahan.Core) (int, error) {
+func (repo *lahanData) CreateLahan(data lahan.Core, user_id int) (int, error) {
+
+	var gudangModel modelGudang.Gudang
+	repo.db.Where("user_id = ?", user_id).Find(&gudangModel)
+	data.GudangID = gudangModel.ID
+
 	dataModel := fromCore(data)
 
 	tx := repo.db.Create(&dataModel)
