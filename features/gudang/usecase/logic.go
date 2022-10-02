@@ -24,12 +24,11 @@ func (usecase *gudangUsecase) PutGudang(id int, data gudang.Core) (int, error) {
 	return 1, nil
 }
 
-func (usecase *gudangUsecase) GetAllGudang() ([]gudang.Core, error) {
+func (usecase *gudangUsecase) GetAllGudang() ([]gudang.Lahan, error) {
 	data, err := usecase.gudangData.SelectAllGudang()
 	if err != nil {
 		return nil, err
 	}
-
 	return data, nil
 }
 
