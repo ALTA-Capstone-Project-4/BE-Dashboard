@@ -3,7 +3,7 @@ package delivery
 import "warehouse/features/lahan"
 
 type LahanRequest struct {
-	Nama                 string `json:"nama" form:"nama"`
+	Nama                 string `json:"name" form:"name"`
 	Luas                 string `json:"luas" form:"luas"`
 	Panjang              string `json:"panjang" form:"panjang"`
 	Lebar                string `json:"lebar" form:"lebar"`
