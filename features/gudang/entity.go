@@ -7,6 +7,7 @@ type Core struct {
 	Longitude string
 	Location  string
 	UserID    uint
+	Lahan     []Lahan
 }
 
 type User struct {
@@ -21,14 +22,28 @@ type User struct {
 	Role     string
 }
 
+type Lahan struct {
+	ID                   int
+	Nama                 string
+	Luas                 string
+	Panjang              string
+	Lebar                string
+	Harga                int
+	Deskripsi            string
+	Fasilitas            string
+	Barang_Tdk_Diizinkan string
+	FotoLahan            string
+	GudangID             uint
+}
+
 type UsecaseInterface interface {
 	PutGudang(id int, data Core) (int, error)
-	GetAllGudang() ([]Core, error)
+	GetAllGudang() ([]Lahan, error)
 	PostGudang(data Core) (int, error)
 }
 
 type DataInterface interface {
 	UpdateGudang(id int, data Core) (int, error)
-	SelectAllGudang() ([]Core, error)
+	SelectAllGudang() ([]Lahan, error)
 	CreatGudang(data Core) (int, error)
 }
