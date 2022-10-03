@@ -18,7 +18,7 @@ func New(e *echo.Echo, usecase favorite.UsecaseInterface) {
 		favoriteUsecase: usecase,
 	}
 	e.POST("/favorite", handler.PostFavorite, middlewares.JWTMiddleware())
-
+	e.GET("/favorite", handler.GetFavorite, middlewares.JWTMiddleware())
 }
 
 func (delivery *FavoriteDelivery) PostFavorite(c echo.Context) error {
@@ -48,4 +48,22 @@ func (delivery *FavoriteDelivery) PostFavorite(c echo.Context) error {
 	}
 
 	return c.JSON(201, helper.SuccessResponseHelper("success insert data"))
+}
+
+func (delivery *FavoriteDelivery) GetFavorite(c echo.Context) error {
+	token, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "penitip" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
+	}
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	data, err := delivery.favoriteUsecase.GetFavorite(token)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error get data"))
+	}
+
+	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCoreList(data)))
 }

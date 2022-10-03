@@ -4,7 +4,6 @@ import "warehouse/features/favorite"
 
 type FavResponse struct {
 	ID             uint
-	UserName       string
 	LahanName      string
 	LahanHarga     int
 	LahanFotoLahan string
@@ -13,7 +12,6 @@ type FavResponse struct {
 func fromCore(data favorite.Core) FavResponse {
 	return FavResponse{
 		ID:             uint(data.ID),
-		UserName:       data.UserName,
 		LahanName:      data.LahanName,
 		LahanHarga:     data.LahanHarga,
 		LahanFotoLahan: data.LahanFotoLahan,

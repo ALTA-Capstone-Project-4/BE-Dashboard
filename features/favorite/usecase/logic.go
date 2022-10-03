@@ -22,3 +22,12 @@ func (usecase *favoriteUsecase) PostFavorite(data favorite.Core) (int, error) {
 
 	return row, nil
 }
+
+func (usecase *favoriteUsecase) GetFavorite(token int) ([]favorite.Core, error) {
+	data, err := usecase.favoriteData.SelectFavorite(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}

@@ -55,7 +55,6 @@ func (data *Favorite) toCore() favorite.Core {
 	return favorite.Core{
 		ID:             int(data.ID),
 		UserID:         data.UserID,
-		UserName:       data.User.Name,
 		LahanID:        data.LahanID,
 		LahanName:      data.Lahan.Nama,
 		LahanHarga:     data.Lahan.Harga,

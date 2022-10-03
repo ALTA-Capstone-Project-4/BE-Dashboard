@@ -34,3 +34,12 @@ func (repo *favoriteData) AddFavorite(data favorite.Core) (int, error) {
 
 	return int(tx.RowsAffected), nil
 }
+
+func (repo *favoriteData) SelectFavorite(token int) ([]favorite.Core, error) {
+	var data []Favorite
+	tx := repo.db.Model(&Favorite{}).Where("user_id = ?", token).Preload("Lahan").Find(&data)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return toCoreList(data), nil
+}

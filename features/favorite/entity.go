@@ -3,7 +3,6 @@ package favorite
 type Core struct {
 	ID             int
 	UserID         uint
-	UserName       string
 	LahanID        uint
 	LahanName      string
 	LahanHarga     int
@@ -26,8 +25,10 @@ type Lahan struct {
 
 type UsecaseInterface interface {
 	PostFavorite(data Core) (int, error)
+	GetFavorite(token int) ([]Core, error)
 }
 
 type DataInterface interface {
 	AddFavorite(data Core) (int, error)
+	SelectFavorite(token int) ([]Core, error)
 }
