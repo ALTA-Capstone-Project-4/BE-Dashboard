@@ -225,40 +225,34 @@ func (delivery *UserDelivery) PutMitra(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("error bind"))
 	}
 
-	var foto string
-	eventCore := toCore(dataUpdate)
-
 	fotoData, fotoInfo, fotoErr := c.Request().FormFile("photo")
 
-	if dataUpdate.Photo != "" {
-		if fotoErr == http.ErrMissingFile || fotoErr != nil {
-			return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get photo profile"))
-		}
-
-		fotoExtension, err_foto_extension := helper.CheckFileExtension(fotoInfo.Filename)
-		if err_foto_extension != nil {
-			return c.JSON(400, helper.FailedResponseHelper("photo profile extension error"))
-		}
-
-		err_foto_size := helper.CheckFileSize(fotoInfo.Size)
-		if err_foto_size != nil {
-			return c.JSON(400, helper.FailedResponseHelper("photo profile size error"))
-		}
-
-		id, _, _ := middlewares.ExtractToken(c)
-		fotoName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + fotoExtension
-
-		fileFoto, errUploadFoto := helper.UploadFileToS3("fotoprofileimage", fotoName, "images", fotoData)
-
-		foto = fileFoto
-
-		if errUploadFoto != nil {
-			fmt.Println(errUploadFoto)
-			return c.JSON(400, helper.FailedResponseHelper("failed to upload photo profile"))
-		}
-
-		eventCore.Photo = foto
+	if fotoErr == http.ErrMissingFile || fotoErr != nil {
+		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get photo profile"))
 	}
+
+	fotoExtension, err_foto_extension := helper.CheckFileExtension(fotoInfo.Filename)
+	if err_foto_extension != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile extension error"))
+	}
+
+	err_foto_size := helper.CheckFileSize(fotoInfo.Size)
+	if err_foto_size != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile size error"))
+	}
+
+	id, _, _ := middlewares.ExtractToken(c)
+	fotoName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + fotoExtension
+
+	foto, errUploadFoto := helper.UploadFileToS3("fotoprofileimage", fotoName, "images", fotoData)
+
+	if errUploadFoto != nil {
+		fmt.Println(errUploadFoto)
+		return c.JSON(400, helper.FailedResponseHelper("failed to upload photo profile"))
+	}
+
+	eventCore := toCore(dataUpdate)
+	eventCore.Photo = foto
 
 	row, err := delivery.userUsecase.PutMitra(token, eventCore)
 	if err != nil {
@@ -329,39 +323,34 @@ func (delivery *UserDelivery) PutClient(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("error bind"))
 	}
 
-	var foto string
-	eventCore := toCore(dataUpdate)
+	fotoData, fotoInfo, fotoErr := c.Request().FormFile("photo")
 
-	if dataUpdate.Photo != "" {
-		fotoData, fotoInfo, fotoErr := c.Request().FormFile("photo")
-
-		if fotoErr == http.ErrMissingFile || fotoErr != nil {
-			return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get photo profile"))
-		}
-
-		fotoExtension, err_foto_extension := helper.CheckFileExtension(fotoInfo.Filename)
-		if err_foto_extension != nil {
-			return c.JSON(400, helper.FailedResponseHelper("photo profile extension error"))
-		}
-
-		err_foto_size := helper.CheckFileSize(fotoInfo.Size)
-		if err_foto_size != nil {
-			return c.JSON(400, helper.FailedResponseHelper("photo profile size error"))
-		}
-
-		id, _, _ := middlewares.ExtractToken(c)
-		fotoName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + fotoExtension
-
-		fileFoto, errUploadFoto := helper.UploadFileToS3("fotoprofileimage", fotoName, "images", fotoData)
-
-		foto = fileFoto
-
-		if errUploadFoto != nil {
-			fmt.Println(errUploadFoto)
-			return c.JSON(400, helper.FailedResponseHelper("failed to upload photo profile"))
-		}
-		eventCore.Photo = foto
+	if fotoErr == http.ErrMissingFile || fotoErr != nil {
+		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get photo profile"))
 	}
+
+	fotoExtension, err_foto_extension := helper.CheckFileExtension(fotoInfo.Filename)
+	if err_foto_extension != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile extension error"))
+	}
+
+	err_foto_size := helper.CheckFileSize(fotoInfo.Size)
+	if err_foto_size != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile size error"))
+	}
+
+	id, _, _ := middlewares.ExtractToken(c)
+	fotoName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + fotoExtension
+
+	fileFoto, errUploadFoto := helper.UploadFileToS3("fotoprofileimage", fotoName, "images", fotoData)
+
+	if errUploadFoto != nil {
+		fmt.Println(errUploadFoto)
+		return c.JSON(400, helper.FailedResponseHelper("failed to upload photo profile"))
+	}
+
+	eventCore := toCore(dataUpdate)
+	eventCore.Photo = fileFoto
 
 	row, err := delivery.userUsecase.PutClient(token, eventCore)
 	if err != nil {

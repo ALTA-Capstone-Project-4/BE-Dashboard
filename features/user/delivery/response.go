@@ -8,7 +8,7 @@ type UserResponse struct {
 	Phone           string `json:"phone,omitempty"`
 	Email           string `json:"email,omitempty"`
 	Address         string `json:"address,omitempty"`
-	Photo           string `form:"photo,omitempty" json:"photo,omitempty"`
+	Photo           string `json:"photo,omitempty"`
 	Role            string `json:"role,omitempty"`
 	Status          string `json:"status,omitempty"`
 	FileKTP         string `json:"file_ktp,omitempty"`

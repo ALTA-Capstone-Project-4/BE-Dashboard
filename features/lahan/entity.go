@@ -26,6 +26,7 @@ type Gudang struct {
 
 type UsecaseInterface interface {
 	PostLahan(data Core, user_id int) (int, error)
+	// PutLahan(id int, data Core)
 }
 
 type DataInterface interface {
