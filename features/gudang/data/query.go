@@ -59,3 +59,18 @@ func (repo *gudangData) CreatGudang(data gudang.Core) (int, error) {
 
 	return int(tx.RowsAffected), nil
 }
+
+func (repo *gudangData) SelectGudangByID(gudang_id int) (gudang.Core, error) {
+	var gudangData Gudang
+
+	tx := repo.db.Where("id = ?", gudang_id).Preload("Lahan").Find(&gudangData)
+	if tx.Error != nil {
+		return gudang.Core{}, tx.Error
+	}
+
+	detailGudang := gudangData.toCore()
+	dataLahan := ToLahanList(gudangData.Lahan)
+	detailGudang.Lahan = dataLahan
+
+	return detailGudang, nil
+}
