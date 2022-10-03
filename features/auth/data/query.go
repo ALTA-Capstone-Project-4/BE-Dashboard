@@ -19,26 +19,13 @@ func New(db *gorm.DB) auth.DataInterface {
 func (repo *authData) LoginUser(email string) (auth.Core, error) {
 	var data User
 
-	if data.Role == "mitra" && data.Status == "verified" {
-		txMitra := repo.db.Where("email = ? AND status = ?", email, "verified").First(&data)
-		if txMitra.Error != nil {
-			return auth.Core{}, txMitra.Error
-		}
-		if txMitra.RowsAffected != 1 {
-			return auth.Core{}, txMitra.Error
-		}
-
-		return toCore(data), nil
-
-	} else {
-		txMitra := repo.db.Where("email = ?", email).First(&data)
-		if txMitra.Error != nil {
-			return auth.Core{}, txMitra.Error
-		}
-		if txMitra.RowsAffected != 1 {
-			return auth.Core{}, txMitra.Error
-		}
-
-		return toCore(data), nil
+	txMitra := repo.db.Where("email = ?", email).First(&data)
+	if txMitra.Error != nil {
+		return auth.Core{}, txMitra.Error
 	}
+	if txMitra.RowsAffected != 1 {
+		return auth.Core{}, txMitra.Error
+	}
+
+	return toCore(data), nil
 }

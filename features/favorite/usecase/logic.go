@@ -16,7 +16,7 @@ func New(data favorite.DataInterface) favorite.UsecaseInterface {
 
 func (usecase *favoriteUsecase) PostFavorite(data favorite.Core) (int, error) {
 	row, err := usecase.favoriteData.AddFavorite(data)
-	if err != nil {
+	if err != nil || row < 1 {
 		return -1, err
 	}
 
@@ -30,4 +30,13 @@ func (usecase *favoriteUsecase) GetFavorite(token int) ([]favorite.Core, error) 
 	}
 
 	return data, nil
+}
+
+func (usecase *favoriteUsecase) DeleteFavorite(token int, idfav int) (int, error) {
+	row, err := usecase.favoriteData.DeleteData(token, idfav)
+	if err != nil || row < 1 {
+		return -1, err
+	}
+
+	return row, nil
 }

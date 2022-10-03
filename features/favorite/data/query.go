@@ -43,3 +43,14 @@ func (repo *favoriteData) SelectFavorite(token int) ([]favorite.Core, error) {
 	}
 	return toCoreList(data), nil
 }
+
+func (repo *favoriteData) DeleteData(token int, idfav int) (int, error) {
+	var deleteFav Favorite
+
+	tx := repo.db.Where("user_id = ? AND id = ?", token, idfav).Delete(&deleteFav)
+	if tx.Error != nil {
+		return -1, tx.Error
+	}
+
+	return 1, nil
+}

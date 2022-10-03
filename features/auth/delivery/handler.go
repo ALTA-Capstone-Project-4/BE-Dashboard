@@ -30,7 +30,7 @@ func (delivery *AuthDelivery) Auth(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("failed bind data"))
 	}
 
-	str, role := delivery.authUsecase.LoginAuthorized(req.Email, req.Password)
+	str, role, name := delivery.authUsecase.LoginAuthorized(req.Email, req.Password)
 
 	if str == "please input email and password" || str == "email not found" || str == "wrong password" {
 		return c.JSON(400, helper.FailedResponseHelper(str))
@@ -42,6 +42,6 @@ func (delivery *AuthDelivery) Auth(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper(str))
 
 	} else {
-		return c.JSON(200, helper.SuccessDataResponseHelper("Login Success", FromCore(str, role)))
+		return c.JSON(200, helper.SuccessDataResponseHelper("Login Success", FromCore(str, role, name)))
 	}
 }
