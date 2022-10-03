@@ -51,7 +51,7 @@ func (delivery *GudangDelivery) PutGudang(c echo.Context) error {
 }
 
 func (delivery *GudangDelivery) GetAllGudang(c echo.Context) error {
-	data, err := delivery.gudangUsecase.GetAllGudang()
+	data, err := delivery.gudangUsecase.GetAllGudang() //untuk homepage
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper("error get data"))
 	}
