@@ -18,12 +18,12 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /home/muhdwi45/BE-Dashboard
+            cd /home/ubuntu/BE-Dashboard
             git pull origin main 
-            docker stop warehouse-container 
-            docker rm warehouse-container 
-            docker rmi muhdwiar/warehouse-image:latest
-            docker build -t muhdwiar/warehouse-image:latest .
-            docker run -d -p 80:8000 -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} -e SERVER_PORT=${{ secrets.SERVER_PORT }} -e S3_KEY=${{ secrets.S3_KEY }} -e S3_SECRET=${{ secrets.S3_SECRET }} -e AWS_REGION=${{ secrets.AWS_REGION }} -e AWS_BUCKET=${{ secrets.AWS_BUCKET }} --name warehouse-container muhdwiar/warehouse-image:latest
+            docker stop warehouseContainer 
+            docker rm warehouseContainer 
+            docker rmi warehouse-images:latest
+            docker build -t warehouse-images:latest .
+            docker run -d -p 80:8000 -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} -e SERVER_PORT=${{ secrets.SERVER_PORT }} -e S3_KEY=${{ secrets.S3_KEY }} -e S3_SECRET=${{ secrets.S3_SECRET }} -e AWS_REGION=${{ secrets.AWS_REGION }} -e AWS_BUCKET=${{ secrets.AWS_BUCKET }} --name warehouseContainer warehouse-images:latest
              
        
