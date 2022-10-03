@@ -1,7 +1,9 @@
 package data
 
 import (
+	"errors"
 	"warehouse/features/gudang"
+	userModel "warehouse/features/user/data"
 
 	"gorm.io/gorm"
 )
@@ -40,8 +42,18 @@ func (repo *gudangData) SelectAllGudang() ([]gudang.Lahan, error) {
 }
 
 func (repo *gudangData) CreatGudang(data gudang.Core) (int, error) {
+	var userData userModel.User
 	dataModel := fromCore(data)
 
+	tx_user := repo.db.Where("id = ?", data.UserID).Find(&userData)
+
+	if tx_user.Error != nil {
+		return 0, tx_user.Error
+	}
+
+	if userData.Status != "verified" {
+		return -1, errors.New("your account unverified")
+	}
 	tx := repo.db.Create(&dataModel)
 	if tx.Error != nil {
 		return 0, tx.Error
