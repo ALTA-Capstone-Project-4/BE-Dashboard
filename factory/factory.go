@@ -19,6 +19,10 @@ import (
 	lahanData "warehouse/features/lahan/data"
 	lahanDelivery "warehouse/features/lahan/delivery"
 	lahanUsecase "warehouse/features/lahan/usecase"
+
+	favoriteData "warehouse/features/favorite/data"
+	favoriteDelivery "warehouse/features/favorite/delivery"
+	favoriteUsecase "warehouse/features/favorite/usecase"
 )
 
 func InitFactory(e *echo.Echo, db *gorm.DB) {
@@ -37,4 +41,8 @@ func InitFactory(e *echo.Echo, db *gorm.DB) {
 	lahanDataFactory := lahanData.New(db)
 	lahanUsecaseFactory := lahanUsecase.New(lahanDataFactory)
 	lahanDelivery.New(e, lahanUsecaseFactory)
+
+	favoriteDataFactory := favoriteData.New(db)
+	favoriteUsecaseFactory := favoriteUsecase.New(favoriteDataFactory)
+	favoriteDelivery.New(e, favoriteUsecaseFactory)
 }

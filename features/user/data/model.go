@@ -18,6 +18,15 @@ type User struct {
 	Role     string
 	Status   string
 	Gudang   Gudang
+	Favorite []Favorite
+}
+
+type Favorite struct {
+	gorm.Model
+	UserID   uint
+	LahanID  uint
+	GudangID uint
+	User     User
 }
 
 type Gudang struct {
