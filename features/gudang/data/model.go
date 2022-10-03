@@ -13,7 +13,7 @@ type Gudang struct {
 	Longitude string
 	Location  string
 	UserID    uint
-	Lahan     Lahan
+	Lahan     []Lahan
 }
 
 type User struct {
@@ -69,6 +69,23 @@ func toCoreList(data []Gudang) []gudang.Core {
 	var dataCore []gudang.Core
 	for key := range data {
 		dataCore = append(dataCore, data[key].toCore())
+	}
+	return dataCore
+}
+
+func (data *Lahan) toLahanCore() gudang.Lahan {
+	return gudang.Lahan{
+		GudangID:  data.GudangID,
+		Luas:      data.Luas,
+		Harga:     data.Harga,
+		FotoLahan: data.FotoLahan,
+	}
+}
+
+func toLahanCoreList(data []Lahan) []gudang.Lahan {
+	var dataCore []gudang.Lahan
+	for _, v := range data {
+		dataCore = append(dataCore, v.toLahanCore())
 	}
 	return dataCore
 }

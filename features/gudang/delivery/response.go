@@ -13,6 +13,13 @@ type GudangResponse struct {
 	UserID    int    `json:"user_id,omitempty"`
 }
 
+type GudangHomepage struct {
+	GudangID  uint   `json:"gudang_id"`
+	Ukuran    string `json:"ukuran,omitempty"`
+	Harga     int    `json:"harga,omitempty"`
+	FotoLahan string `json:"foto_lahan,omitempty"`
+}
+
 func fromCore(data gudang.Core) GudangResponse {
 	return GudangResponse{
 		ID:        uint(data.ID),
@@ -21,6 +28,15 @@ func fromCore(data gudang.Core) GudangResponse {
 		Latitude:  data.Latitude,
 		Longitude: data.Longitude,
 		UserID:    int(data.UserID),
+	}
+}
+
+func fromCore_toHomepage(data gudang.Lahan) GudangHomepage {
+	return GudangHomepage{
+		GudangID:  uint(data.GudangID),
+		Ukuran:    data.Luas,
+		Harga:     data.Harga,
+		FotoLahan: data.FotoLahan,
 	}
 }
 
@@ -37,5 +53,13 @@ func fromCoreList(data []gudang.Core) []GudangResponse {
 		})
 	}
 
+	return dataRes
+}
+
+func fromCore_toHomeList(data []gudang.Lahan) []GudangHomepage {
+	var dataRes []GudangHomepage
+	for _, v := range data {
+		dataRes = append(dataRes, fromCore_toHomepage(v))
+	}
 	return dataRes
 }
