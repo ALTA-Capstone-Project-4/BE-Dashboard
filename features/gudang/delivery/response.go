@@ -36,7 +36,7 @@ func fromCore(data gudang.Core) GudangResponse {
 func fromCore_toHomepage(data gudang.Lahan) GudangHomepage {
 	return GudangHomepage{
 		GudangID:  uint(data.GudangID),
-		Ukuran:    data.Luas,
+		Ukuran:    data.Panjang + " x " + data.Lebar,
 		Harga:     data.Harga,
 		FotoLahan: data.FotoLahan,
 	}
