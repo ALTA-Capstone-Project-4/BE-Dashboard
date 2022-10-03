@@ -24,7 +24,7 @@ func New(e *echo.Echo, usecase gudang.UsecaseInterface) {
 }
 
 func (delivery *GudangDelivery) PutGudang(c echo.Context) error {
-	token, role, errToken := middlewares.ExtractToken(c)
+	id, role, errToken := middlewares.ExtractToken(c)
 
 	if role != "mitra" {
 		return c.JSON(400, helper.FailedResponseHelper("Unauthorized"))
@@ -40,7 +40,7 @@ func (delivery *GudangDelivery) PutGudang(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("error bind"))
 	}
 
-	row, err := delivery.gudangUsecase.PutGudang(token, toCore(dataUpdate))
+	row, err := delivery.gudangUsecase.PutGudang(id, toCore(dataUpdate))
 	if err != nil {
 		return c.JSON(500, helper.FailedResponseHelper("error update data"))
 	}
