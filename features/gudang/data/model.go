@@ -69,7 +69,8 @@ func (data *Gudang) toCore() gudang.Core {
 func (data *Lahan) toLahanCore() gudang.Lahan {
 	return gudang.Lahan{
 		GudangID:  int(data.GudangID),
-		Luas:      data.Luas,
+		Panjang:   data.Panjang,
+		Lebar:     data.Lebar,
 		Harga:     data.Harga,
 		FotoLahan: data.FotoLahan,
 	}
