@@ -141,13 +141,13 @@ func (delivery *UserDelivery) PutVerify(c echo.Context) error {
 
 	row, err := delivery.userUsecase.PutVerify(idCnv, toCore(verify))
 	if err != nil {
-		return c.JSON(500, helper.FailedResponseHelper("error verify data"))
+		return c.JSON(500, helper.FailedResponseHelper("error update status"))
 	}
 	if row != 1 {
-		return c.JSON(500, helper.FailedResponseHelper("error verify data"))
+		return c.JSON(500, helper.FailedResponseHelper("error update status"))
 	}
 
-	return c.JSON(201, helper.SuccessResponseHelper("success verify data"))
+	return c.JSON(201, helper.SuccessResponseHelper("success update status"))
 
 }
 
@@ -360,7 +360,6 @@ func (delivery *UserDelivery) PutClient(c echo.Context) error {
 		return c.JSON(500, helper.FailedResponseHelper("error update data"))
 	}
 	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
-
 }
 
 func (delivery *UserDelivery) DeleteClient(c echo.Context) error {
