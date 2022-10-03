@@ -8,6 +8,7 @@ type Core struct {
 	Location  string
 	UserID    uint
 	Lahan     []Lahan
+	User      User
 }
 
 type User struct {
@@ -20,6 +21,7 @@ type User struct {
 	Photo    string
 	FileKTP  string
 	Role     string
+	Status   string
 }
 
 type Lahan struct {
