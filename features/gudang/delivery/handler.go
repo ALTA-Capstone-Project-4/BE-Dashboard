@@ -78,9 +78,7 @@ func (delivery *GudangDelivery) PostGudang(c echo.Context) error {
 	dataGudang.UserID = id
 
 	row_postGudang, err_postGudang := delivery.gudangUsecase.PostGudang(toCore(dataGudang))
-	if err_postGudang.Error() == "your account unverified" {
-		return c.JSON(500, helper.FailedResponseHelper(err_postGudang.Error()))
-	}
+
 	if row_postGudang != 1 || err_postGudang != nil {
 		return c.JSON(500, helper.FailedResponseHelper("error add data"))
 	}
