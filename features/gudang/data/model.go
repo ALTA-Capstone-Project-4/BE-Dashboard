@@ -14,19 +14,20 @@ type Gudang struct {
 	Location  string
 	UserID    uint
 	Lahan     []Lahan
+	User      User `gorm:"foreignKey:UserID"`
 }
 
 type User struct {
 	gorm.Model
 	Name     string
-	Email    string
+	Email    string `gorm:"unique"`
 	Password string
 	Phone    string
 	Address  string
 	Photo    string
 	FileKTP  string
 	Role     string
-	Gudang   Gudang
+	Status   string
 }
 
 type Lahan struct {
