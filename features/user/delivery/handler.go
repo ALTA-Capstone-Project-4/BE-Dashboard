@@ -148,7 +148,6 @@ func (delivery *UserDelivery) PutVerify(c echo.Context) error {
 	}
 
 	return c.JSON(201, helper.SuccessResponseHelper("success update status"))
-
 }
 
 func (delivery *UserDelivery) GetMitraVerified(c echo.Context) error {
