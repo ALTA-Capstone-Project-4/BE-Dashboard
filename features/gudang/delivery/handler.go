@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"strconv"
 	"warehouse/features/gudang"
 	"warehouse/middlewares"
 	"warehouse/utils/helper"
@@ -20,6 +21,7 @@ func New(e *echo.Echo, usecase gudang.UsecaseInterface) {
 	e.PUT("/gudang", handler.PutGudang, middlewares.JWTMiddleware())
 	e.GET("/gudang", handler.GetAllGudang)
 	e.POST("/gudang", handler.PostGudang, middlewares.JWTMiddleware())
+	e.GET("/gudang/:id/lahan", handler.GetGudangByID)
 
 }
 
@@ -83,4 +85,15 @@ func (delivery *GudangDelivery) PostGudang(c echo.Context) error {
 		return c.JSON(500, helper.FailedResponseHelper("error add data"))
 	}
 	return c.JSON(201, helper.SuccessResponseHelper("success add data"))
+}
+
+func (delivery *GudangDelivery) GetGudangByID(c echo.Context) error {
+	gudang_id := c.Param("id")
+	idCnv, _ := strconv.Atoi(gudang_id)
+	data, err := delivery.gudangUsecase.GetGudangByID(idCnv)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error get data"))
+	}
+
+	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCore(data)))
 }

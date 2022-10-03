@@ -41,3 +41,13 @@ func (usecase *gudangUsecase) PostGudang(data gudang.Core) (int, error) {
 
 	return row, err
 }
+
+func (usecase *gudangUsecase) GetGudangByID(gudang_id int) (gudang.Core, error) {
+	data, err := usecase.gudangData.SelectGudangByID(gudang_id)
+
+	if err != nil {
+		return gudang.Core{}, err
+	}
+
+	return data, nil
+}
