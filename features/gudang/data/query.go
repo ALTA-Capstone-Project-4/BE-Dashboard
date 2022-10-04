@@ -53,6 +53,18 @@ func (repo *gudangData) CreatGudang(data gudang.Core) (int, error) {
 	if userData.Status != "verified" {
 		return -1, errors.New("your account unverified")
 	}
+
+	var tempGudangData Gudang
+	tx_gudang := repo.db.Where("user_id = ?", userData.ID).Find(&tempGudangData)
+
+	if tx_gudang.Error != nil {
+		return 0, tx_user.Error
+	}
+
+	if tempGudangData.ID != 0 {
+		return -1, errors.New("can't add gudang, already create one")
+	}
+
 	tx := repo.db.Create(&dataModel)
 	if tx.Error != nil {
 		return 0, tx.Error
