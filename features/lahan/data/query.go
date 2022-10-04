@@ -32,3 +32,27 @@ func (repo *lahanData) CreateLahan(data lahan.Core, user_id int) (int, error) {
 
 	return int(tx.RowsAffected), nil
 }
+
+func (repo *lahanData) SelectDetailLahan(id int, role string) (lahan.Core, error) {
+
+	if role == "mitra" {
+
+		var data Lahan
+		tx := repo.db.Where("id = ?", id).Preload("Checkout").Find(&data)
+		if tx.Error != nil {
+			return lahan.Core{}, tx.Error
+		}
+
+		return data.toCore(), nil
+
+	} else {
+
+		var data Lahan
+		tx := repo.db.Where("id = ?", id).Find(&data)
+		if tx.Error != nil {
+			return lahan.Core{}, tx.Error
+		}
+
+		return data.toCore(), nil
+	}
+}

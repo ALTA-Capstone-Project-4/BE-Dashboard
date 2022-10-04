@@ -31,4 +31,5 @@ type UsecaseInterface interface {
 
 type DataInterface interface {
 	CreateLahan(data Core, user_id int) (int, error)
+	SelectDetailLahan(id int, role string) (Core, error)
 }

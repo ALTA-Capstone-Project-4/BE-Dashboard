@@ -4,6 +4,7 @@ import "warehouse/features/favorite"
 
 type FavResponse struct {
 	ID             uint
+	LahanID        int
 	LahanName      string
 	LahanHarga     int
 	LahanFotoLahan string
