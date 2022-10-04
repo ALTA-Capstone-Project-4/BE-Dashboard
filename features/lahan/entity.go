@@ -26,10 +26,16 @@ type Gudang struct {
 
 type UsecaseInterface interface {
 	PostLahan(data Core, user_id int) (int, error)
-	// PutLahan(id int, data Core)
+	GetDetailLahan(id int, role string) (Core, error)
+	PutLahan(id int, token int, data Core) (int, error)
+	DeleteLahan(id int, token int, data Core) (int, error)
+	GetLahanClient(token int) ([]Core, error)
 }
 
 type DataInterface interface {
 	CreateLahan(data Core, user_id int) (int, error)
 	SelectDetailLahan(id int, role string) (Core, error)
+	UpdateLahan(id int, token int, data Core) (int, error)
+	DeleteData(id int, token int, data Core) (int, error)
+	SelectLahanClient(token int) ([]Core, error)
 }

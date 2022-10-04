@@ -65,6 +65,7 @@ func (data *User) toCore() user.Core {
 		FileKTP:         data.FileKTP,
 		Role:            data.Role,
 		Status:          data.Status,
+		GudangID:        int(data.Gudang.ID),
 		GudangName:      data.Gudang.Name,
 		GudangLocation:  data.Gudang.Location,
 		GudangLatitude:  data.Gudang.Latitude,
