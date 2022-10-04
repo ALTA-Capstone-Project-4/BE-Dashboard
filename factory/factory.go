@@ -23,6 +23,10 @@ import (
 	favoriteData "warehouse/features/favorite/data"
 	favoriteDelivery "warehouse/features/favorite/delivery"
 	favoriteUsecase "warehouse/features/favorite/usecase"
+
+	checkoutData "warehouse/features/checkout/data"
+	checkoutDelivery "warehouse/features/checkout/delivery"
+	checkoutUsecase "warehouse/features/checkout/usecase"
 )
 
 func InitFactory(e *echo.Echo, db *gorm.DB) {
@@ -45,4 +49,8 @@ func InitFactory(e *echo.Echo, db *gorm.DB) {
 	favoriteDataFactory := favoriteData.New(db)
 	favoriteUsecaseFactory := favoriteUsecase.New(favoriteDataFactory)
 	favoriteDelivery.New(e, favoriteUsecaseFactory)
+
+	checkoutDataFactory := checkoutData.New(db)
+	checkoutUsecaseFactory := checkoutUsecase.New(checkoutDataFactory, lahanDataFactory)
+	checkoutDelivery.New(e, checkoutUsecaseFactory)
 }
