@@ -62,7 +62,6 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 	imageData, imageInfo, imageErr := c.Request().FormFile("foto")
 
 	if imageErr == http.ErrMissingFile || imageErr != nil {
-		fmt.Println("Handler :", imageErr)
 		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get foto_barang"))
 	}
 
@@ -81,11 +80,9 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 	image, errUploadImg := helper.UploadFileToS3("barangimage", imageName, "images", imageData)
 
 	if errUploadImg != nil {
-		fmt.Println(errUploadImg)
 		return c.JSON(400, helper.FailedResponseHelper("failed to upload foto_barang"))
 	}
 
-	fmt.Println(dataCheckout.MulaiSewa)
 	dataCore := toCore(dataCheckout)
 	dataCore.MulaiSewa = mulaiSewa
 	dataCore.AkhirSewa = akhirSewa
@@ -100,8 +97,6 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 
 	dataCore.TotalHarga = hargaLahan
 
-	fmt.Println(dataCore.MulaiSewa, "dataCore mulai sewa")
-
 	currentTime := time.Now()
 	date := currentTime.Format("2006-01-02")
 	timer := currentTime.Format("15:04:05")
@@ -111,10 +106,24 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 
 	inputPay := ToCoreMidtrans(dataCore)
 
-	if dataCheckout.MetodePembayaran == "BANK_TRANSFER_BCA" {
-		dataCore.MetodePembayaran = "BANK_TRANSFER_BCA"
+	if dataCheckout.MetodePembayaran == "BCA" {
+		dataCore.MetodePembayaran = "BCA"
 		inputPay.BankTransfer = &coreapi.BankTransferDetails{
 			Bank: midtrans.BankBca,
+		}
+	}
+
+	if dataCheckout.MetodePembayaran == "BRI" {
+		dataCore.MetodePembayaran = "BRI"
+		inputPay.BankTransfer = &coreapi.BankTransferDetails{
+			Bank: midtrans.BankBri,
+		}
+	}
+
+	if dataCheckout.MetodePembayaran == "BNI" {
+		dataCore.MetodePembayaran = "BNI"
+		inputPay.BankTransfer = &coreapi.BankTransferDetails{
+			Bank: midtrans.BankBni,
 		}
 	}
 
@@ -134,6 +143,8 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 	dataCore.OrderID = result.OrderID
 	dataCore.Status = result.TransactionStatus
 	dataCore.TransactionID = result.TransactionID
+	dataCore.BillNumber = result.BillNumber
+	dataCore.TransactionExpire = result.TransactionExpire.String()
 
 	row, err := delivery.checkoutUsecase.PostCheckoutByFav(dataCore)
 	if err != nil {
@@ -157,6 +168,6 @@ func (delivery CheckoutDelivery) MidtransWebHook(c echo.Context) error {
 	if errUpdateStatusPay != nil {
 		return c.JSON(500, helper.FailedResponseHelper("failed to update status payment"))
 	}
-	fmt.Println(errUpdateStatusPay)
+
 	return c.JSON(201, helper.SuccessResponseHelper("success to update status payment"))
 }
