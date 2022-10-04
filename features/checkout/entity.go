@@ -1,14 +1,23 @@
-package gudang
+package checkout
+
+import "time"
 
 type Core struct {
-	ID        int
-	Name      string
-	Latitude  string
-	Longitude string
-	Location  string
-	UserID    uint
-	Lahan     []Lahan
-	User      User
+	ID               int
+	FotoBarang       string
+	NamaBarang       string
+	MulaiSewa        time.Time
+	AkhirSewa        time.Time
+	MetodePembayaran string
+	Status           string
+	TotalHarga       int
+	UserID           int
+	UserName         string
+	LahanID          int
+	LahanFoto        string
+	LahanNama        string
+	LahanHarga       int
+	FavoriteID       int
 }
 
 type User struct {
@@ -36,18 +45,14 @@ type Lahan struct {
 	Barang_Tdk_Diizinkan string
 	FotoLahan            string
 	GudangID             uint
+	UserID               uint
+	CheckoutID           uint
 }
 
 type UsecaseInterface interface {
-	PutGudang(id int, data Core) (int, error)
-	GetAllGudang() ([]Lahan, error)
-	PostGudang(data Core) (int, error)
-	// GetHomepage(page int) ([]Core, error)
+	PostCheckoutByFav(data Core) (int, error)
 }
 
 type DataInterface interface {
-	UpdateGudang(id int, data Core) (int, error)
-	SelectAllGudang() ([]Lahan, error)
-	CreatGudang(data Core) (int, error)
-	// SelectHomepage(page int) ([]Core, error)
+	AddCheckoutByFav(data Core) (int, error)
 }

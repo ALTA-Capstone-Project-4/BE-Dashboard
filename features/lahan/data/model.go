@@ -1,6 +1,7 @@
 package data
 
 import (
+	"time"
 	"warehouse/features/lahan"
 
 	"gorm.io/gorm"
@@ -18,7 +19,53 @@ type Lahan struct {
 	Barang_Tdk_Diizinkan string
 	FotoLahan            string
 	GudangID             uint
+	Checkout             Checkout
 	Gudang               Gudang
+}
+
+// type Favorite struct {
+// 	gorm.Model
+// 	UserID  uint
+// 	LahanID uint
+// 	User    User
+// }
+
+type Checkout struct {
+	gorm.Model
+	FotoBarang       string
+	NamaBarang       string
+	MulaiSewa        time.Time
+	AkhirSewa        time.Time
+	MetodePembayaran string
+	Status           string
+	TotalHarga       int
+	UserID           int
+	LahanID          int
+	User             User
+}
+
+// type Gudang struct {
+// 	gorm.Model
+// 	Name      string
+// 	Latitude  string
+// 	Longitude string
+// 	Location  string
+// 	UserID    uint
+// 	Lahan     []Lahan
+// }
+
+type User struct {
+	ID       int
+	Name     string
+	Email    string
+	Password string
+	Phone    string
+	Address  string
+	Photo    string
+	FileKTP  string
+	Role     string
+	Status   string
+	Lahan    []Lahan
 }
 
 type Gudang struct {
@@ -60,6 +107,12 @@ func (data *Lahan) toCore() lahan.Core {
 		Barang_Tdk_Diizinkan: data.Barang_Tdk_Diizinkan,
 		FotoLahan:            data.FotoLahan,
 		GudangID:             data.GudangID,
+		CheckoutFotoBarang:   data.Checkout.FotoBarang,
+		CheckoutMulaiSewa:    data.Checkout.MulaiSewa,
+		CheckoutAkhirSewa:    data.Checkout.AkhirSewa,
+		CheckoutNamaBarang:   data.Checkout.NamaBarang,
+		// UserName:             data.User.Name,
+		// UserAddress:          data.User.Address,
 	}
 }
 

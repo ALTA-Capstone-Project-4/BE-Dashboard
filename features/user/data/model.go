@@ -8,25 +8,24 @@ import (
 
 type User struct {
 	gorm.Model
-	Name     string
-	Email    string `gorm:"unique"`
-	Password string
-	Phone    string
-	Address  string
-	Photo    string
-	FileKTP  string
-	Role     string
-	Status   string
-	Gudang   Gudang
-	Favorite []Favorite
+	Name      string
+	Email     string `gorm:"unique"`
+	Password  string
+	Phone     string
+	Address   string
+	Photo     string
+	FileKTP   string
+	Role      string
+	Status    string
+	Gudang    Gudang
+	Favorites []Favorite
 }
 
 type Favorite struct {
 	gorm.Model
-	UserID   uint
-	LahanID  uint
-	GudangID uint
-	User     User
+	UserID  uint
+	LahanID uint
+	User    User
 }
 
 type Gudang struct {

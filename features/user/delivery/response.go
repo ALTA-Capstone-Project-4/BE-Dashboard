@@ -12,6 +12,7 @@ type UserResponse struct {
 	Role            string `json:"role,omitempty"`
 	Status          string `json:"status,omitempty"`
 	FileKTP         string `json:"file_ktp,omitempty"`
+	GudangID        int    `json:"gudang_id,omitempty"`
 	GudangName      string `json:"gudangname,omitempty"`
 	GudangLocation  string `json:"gudanglocation,omitempty"`
 	GudangLatitude  string `json:"gudanglatitude,omitempty"`
@@ -29,6 +30,7 @@ func fromCore(data user.Core) UserResponse {
 		Role:            data.Role,
 		Status:          data.Status,
 		FileKTP:         data.FileKTP,
+		GudangID:        data.GudangID,
 		GudangName:      data.GudangName,
 		GudangLocation:  data.GudangLocation,
 		GudangLatitude:  data.GudangLatitude,

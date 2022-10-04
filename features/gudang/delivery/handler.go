@@ -20,6 +20,7 @@ func New(e *echo.Echo, usecase gudang.UsecaseInterface) {
 	e.PUT("/gudang", handler.PutGudang, middlewares.JWTMiddleware())
 	e.GET("/gudang", handler.GetAllGudang)
 	e.POST("/gudang", handler.PostGudang, middlewares.JWTMiddleware())
+	// e.GET("/gudang", handler.GetHomepage, middlewares.JWTMiddleware())
 
 }
 
@@ -84,3 +85,24 @@ func (delivery *GudangDelivery) PostGudang(c echo.Context) error {
 	}
 	return c.JSON(201, helper.SuccessResponseHelper("success add data"))
 }
+
+// func (delivery *GudangDelivery) GetHomepage(c echo.Context) error {
+// 	var pageparam int
+// 	query := c.QueryParam("page")
+// 	if query != "" {
+// 		pageint, err := strconv.Atoi(query)
+// 		if err != nil {
+// 			return c.JSON(400, helper.FailedResponseHelper("query param must be number"))
+// 		}
+// 		pageparam = pageint
+// 	}
+
+// 	data, errGet := delivery.gudangUsecase.GetHomepage(pageparam)
+// 	if errGet != nil {
+// 		return c.JSON(400, helper.FailedResponseHelper("error get all data"))
+// 	} else if len(data) == 0 {
+// 		return c.JSON(200, helper.SuccessResponseHelper("gudang data is still empty"))
+// 	}
+
+// 	return c.JSON(200, helper.SuccessDataResponseHelper("success get all data", fromCoreList(data)))
+// }

@@ -16,16 +16,16 @@ type Favorite struct {
 
 type User struct {
 	gorm.Model
-	Name     string
-	Email    string `gorm:"unique"`
-	Password string
-	Phone    string
-	Address  string
-	Photo    string
-	FileKTP  string
-	Role     string
-	Status   string
-	Favorite []Favorite
+	Name      string
+	Email     string
+	Password  string
+	Phone     string
+	Address   string
+	Photo     string
+	FileKTP   string
+	Role      string
+	Status    string
+	Favorites []Favorite
 }
 
 type Lahan struct {
@@ -40,7 +40,7 @@ type Lahan struct {
 	Barang_Tdk_Diizinkan string
 	FotoLahan            string
 	GudangID             uint
-	Favorite             []Favorite
+	Favorites            []Favorite
 }
 
 func fromCore(dataCore favorite.Core) Favorite {

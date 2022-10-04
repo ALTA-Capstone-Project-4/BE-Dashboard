@@ -22,7 +22,9 @@ func New(e *echo.Echo, usecase lahan.UsecaseInterface) {
 	}
 
 	e.POST("/lahan", handler.PostLahan, middlewares.JWTMiddleware())
-
+	e.PUT("/lahan/:id", handler.PutLahan, middlewares.JWTMiddleware())
+	e.GET("/lahan/:id", handler.GetDetailLahan, middlewares.JWTMiddleware())
+	e.DELETE("/lahan/:id", handler.DeleteLahan, middlewares.JWTMiddleware())
 }
 
 func (delivery *LahanDelivery) PostLahan(c echo.Context) error {
@@ -75,4 +77,110 @@ func (delivery *LahanDelivery) PostLahan(c echo.Context) error {
 		return c.JSON(500, helper.FailedResponseHelper("error add data"))
 	}
 	return c.JSON(201, helper.SuccessResponseHelper("success add data"))
+}
+
+func (delivery *LahanDelivery) PutLahan(c echo.Context) error {
+	id, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "mitra" {
+		return c.JSON(400, helper.FailedResponseHelper("Unauthorized"))
+	}
+	if errToken != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	idLahan := c.Param("id")
+	idCnv, _ := strconv.Atoi(idLahan)
+
+	var newData LahanRequest
+
+	errBind := c.Bind(&newData)
+	if errBind != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+	}
+
+	imageData, imageInfo, imageErr := c.Request().FormFile("foto_lahan")
+
+	if imageErr == http.ErrMissingFile || imageErr != nil {
+		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get foto_lahan"))
+	}
+
+	imageExtension, err_image_extension := helper.CheckFileExtension(imageInfo.Filename)
+	if err_image_extension != nil {
+		return c.JSON(400, helper.FailedResponseHelper("foto_lahan extension error"))
+	}
+
+	err_file_size := helper.CheckFileSize(imageInfo.Size)
+	if err_file_size != nil {
+		return c.JSON(400, helper.FailedResponseHelper("foto_lahan size error"))
+	}
+
+	imageName := strconv.Itoa(id) + time.Now().Format("2006-01-02 15:04:05") + "." + imageExtension
+
+	image, errUploadImg := helper.UploadFileToS3("lahanimage", imageName, "images", imageData)
+
+	if errUploadImg != nil {
+		fmt.Println(errUploadImg)
+		return c.JSON(400, helper.FailedResponseHelper("failed to upload foto_lahan"))
+	}
+
+	newData.FotoLahan = image
+
+	row, err := delivery.lahanUsecase.PutLahan(idCnv, toCore(newData))
+	if err != nil {
+		return c.JSON(500, helper.FailedResponseHelper("error update data"))
+	}
+	if row != 1 {
+		return c.JSON(500, helper.FailedResponseHelper("error update data"))
+	}
+
+	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
+}
+
+func (delivery *LahanDelivery) GetDetailLahan(c echo.Context) error {
+	_, role, errToken := middlewares.ExtractToken(c)
+
+	if role == "admin" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
+	}
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	id := c.Param("id")
+	idlahan, _ := strconv.Atoi(id)
+
+	data, err := delivery.lahanUsecase.GetDetailLahan(idlahan, role)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error get data"))
+	}
+	if data.ID == 0 {
+		return c.JSON(400, helper.FailedResponseHelper("there is no data lahan"))
+	}
+	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCore(data)))
+
+}
+
+func (delivery *LahanDelivery) DeleteLahan(c echo.Context) error {
+	token, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "mitra" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
+	}
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	id := c.Param("id")
+	idlahan, errId := strconv.Atoi(id)
+	if errId != nil {
+		return c.JSON(400, helper.FailedResponseHelper("param must be number"))
+	}
+
+	row, err := delivery.lahanUsecase.DeleteLahan(token, idlahan)
+	if err != nil || row != 1 {
+		return c.JSON(400, helper.FailedResponseHelper("failed delete"))
+	}
+
+	return c.JSON(200, helper.SuccessResponseHelper("success delete"))
 }
