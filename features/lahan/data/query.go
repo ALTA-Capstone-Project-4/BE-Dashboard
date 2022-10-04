@@ -2,8 +2,8 @@ package data
 
 import (
 	"errors"
+	modelCheckout "warehouse/features/checkout/data"
 	modelGudang "warehouse/features/gudang/data"
-
 	"warehouse/features/lahan"
 
 	"gorm.io/gorm"
@@ -79,11 +79,17 @@ func (repo *lahanData) DeleteData(id int, token int, data lahan.Core) (int, erro
 }
 
 func (repo *lahanData) SelectLahanClient(token int) ([]lahan.Core, error) {
-	// var checkoutModel modelGudang.Gudang
-	var data []Lahan
-	tx := repo.db.Model(&Lahan{}).Where("status = ?", "verified").Find(&data)
-	if tx.Error != nil {
-		return nil, tx.Error
+	var checkoutData modelCheckout.Checkout
+	if checkoutData.Status == "paid" || checkoutData.Status == "pending" {
+
+		var data []Lahan
+		tx := repo.db.Model(&Lahan{}).Where("id = ?", token).Preload("Checkout").Find(&data)
+		if tx.Error != nil {
+			return nil, tx.Error
+		}
+		return toCoreList(data), nil
+
+	} else {
+		return nil, errors.New("no have data")
 	}
-	return toCoreList(data), nil
 }
