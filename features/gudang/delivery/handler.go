@@ -60,7 +60,7 @@ func (delivery *GudangDelivery) GetAllGudang(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper("page param must be number"))
 	}
 
-	data, err := delivery.gudangUsecase.GetAllGudang(pageCnv) //untuk homepage
+	data, err := delivery.gudangUsecase.GetAllGudang(pageCnv) //untuk home
 	if err != nil {
 		return c.JSON(400, helper.FailedResponseHelper("error get data"))
 	}
