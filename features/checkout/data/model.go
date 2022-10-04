@@ -18,6 +18,8 @@ type Checkout struct {
 	TotalHarga       int
 	UserID           int
 	LahanID          int
+	OrderID          string
+	TransactionID    string
 	User             User  `gorm:"foreignKey:UserID"`
 	Lahan            Lahan `gorm:"foreignKey:LahanID"`
 }
@@ -66,6 +68,8 @@ func toCore(data Checkout) checkout.Core {
 		LahanFoto:        data.Lahan.FotoLahan,
 		LahanNama:        data.Lahan.Nama,
 		LahanHarga:       data.Lahan.Harga,
+		OrderID:          data.OrderID,
+		TransactionID:    data.TransactionID,
 	}
 	return core
 }
@@ -81,6 +85,29 @@ func fromCore(dataCore checkout.Core) Checkout {
 		TotalHarga:       dataCore.TotalHarga,
 		LahanID:          dataCore.LahanID,
 		UserID:           dataCore.UserID,
+		OrderID:          dataCore.OrderID,
+		TransactionID:    dataCore.TransactionID,
 	}
 	return dataModel
+}
+
+func (data *Checkout) toCoreMidtrans() checkout.Core {
+	return checkout.Core{
+		ID:               int(data.ID),
+		FotoBarang:       data.FotoBarang,
+		NamaBarang:       data.NamaBarang,
+		MulaiSewa:        data.MulaiSewa,
+		AkhirSewa:        data.AkhirSewa,
+		MetodePembayaran: data.MetodePembayaran,
+		Status:           data.Status,
+		TotalHarga:       data.TotalHarga,
+		UserID:           data.UserID,
+		UserName:         data.User.Name,
+		LahanID:          data.LahanID,
+		LahanFoto:        data.Lahan.FotoLahan,
+		LahanNama:        data.Lahan.Nama,
+		LahanHarga:       data.Lahan.Harga,
+		OrderID:          data.OrderID,
+		TransactionID:    data.TransactionID,
+	}
 }
