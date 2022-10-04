@@ -22,7 +22,10 @@ func New(e *echo.Echo, usecase lahan.UsecaseInterface) {
 	}
 
 	e.POST("/lahan", handler.PostLahan, middlewares.JWTMiddleware())
-
+	e.GET("/lahan/:id", handler.GetDetailLahan, middlewares.JWTMiddleware())
+	e.PUT("/lahan/:id", handler.PutLahan, middlewares.JWTMiddleware())
+	e.DELETE("/lahan/:id", handler.DeleteLahan, middlewares.JWTMiddleware())
+	e.GET("/penitip/lahan", handler.GetDetailLahan, middlewares.JWTMiddleware())
 }
 
 func (delivery *LahanDelivery) PostLahan(c echo.Context) error {
@@ -75,4 +78,129 @@ func (delivery *LahanDelivery) PostLahan(c echo.Context) error {
 		return c.JSON(500, helper.FailedResponseHelper("error add data"))
 	}
 	return c.JSON(201, helper.SuccessResponseHelper("success add data"))
+}
+
+func (delivery *LahanDelivery) GetDetailLahan(c echo.Context) error {
+	_, role, errToken := middlewares.ExtractToken(c)
+
+	if role == "admin" {
+		return c.JSON(400, helper.FailedResponseHelper("Unauthorized"))
+	}
+	if errToken != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	id := c.Param("id")
+	idlahan, _ := strconv.Atoi(id)
+
+	data, err := delivery.lahanUsecase.GetDetailLahan(idlahan, role)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error get data"))
+	}
+	if data.ID == 0 {
+		return c.JSON(400, helper.FailedResponseHelper("there is no data mitra"))
+	}
+	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCore(data)))
+}
+
+func (delivery *LahanDelivery) PutLahan(c echo.Context) error {
+	token, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "mitra" {
+		return c.JSON(400, helper.FailedResponseHelper("Unauthorized"))
+	}
+	if errToken != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	idlahan := c.Param("id")
+	idCnv, _ := strconv.Atoi(idlahan)
+
+	var dataUpdate LahanRequest
+
+	errBind := c.Bind(&dataUpdate)
+	if errBind != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+	}
+
+	fotoData, fotoInfo, fotoErr := c.Request().FormFile("foto_lahan")
+
+	if fotoErr == http.ErrMissingFile || fotoErr != nil {
+		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get photo profile"))
+	}
+
+	fotoExtension, err_foto_extension := helper.CheckFileExtension(fotoInfo.Filename)
+	if err_foto_extension != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile extension error"))
+	}
+
+	err_foto_size := helper.CheckFileSize(fotoInfo.Size)
+	if err_foto_size != nil {
+		return c.JSON(400, helper.FailedResponseHelper("photo profile size error"))
+	}
+
+	fotoName := strconv.Itoa(token) + time.Now().Format("2006-01-02 15:04:05") + "." + fotoExtension
+
+	foto, errUploadFoto := helper.UploadFileToS3("fotoprofileimage", fotoName, "images", fotoData)
+
+	if errUploadFoto != nil {
+		fmt.Println(errUploadFoto)
+		return c.JSON(400, helper.FailedResponseHelper("failed to upload foto lahan"))
+	}
+
+	eventCore := toCore(dataUpdate)
+	eventCore.FotoLahan = foto
+
+	row, err := delivery.lahanUsecase.PutLahan(idCnv, token, eventCore)
+	if row != 1 {
+		return c.JSON(500, helper.FailedResponseHelper("Unauthorized"))
+	}
+	if err != nil {
+		return c.JSON(500, helper.FailedResponseHelper("error update data"))
+	}
+
+	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
+}
+
+func (delivery *LahanDelivery) DeleteLahan(c echo.Context) error {
+	token, role, errToken := middlewares.ExtractToken(c)
+
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+	if role != "mitra" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unauthorized"))
+	}
+
+	id := c.Param("id")
+	idCnv, _ := strconv.Atoi(id)
+
+	var data lahan.Core
+	row, err := delivery.lahanUsecase.DeleteLahan(idCnv, token, data)
+	if row != 1 {
+		return c.JSON(500, helper.FailedResponseHelper("Unauthorized"))
+	}
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("failed delete"))
+	}
+
+	return c.JSON(200, helper.SuccessResponseHelper("success delete"))
+}
+
+func (delivery *LahanDelivery) GetLahanClient(c echo.Context) error {
+	token, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "admin" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
+	}
+	if errToken != nil {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	data, err := delivery.lahanUsecase.GetLahanClient(token)
+	if err != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error get data"))
+	}
+
+	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCoreList(data)))
 }

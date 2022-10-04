@@ -1,6 +1,8 @@
 package data
 
 import (
+	"errors"
+	modelCheckout "warehouse/features/checkout/data"
 	modelGudang "warehouse/features/gudang/data"
 	"warehouse/features/lahan"
 
@@ -34,25 +36,60 @@ func (repo *lahanData) CreateLahan(data lahan.Core, user_id int) (int, error) {
 }
 
 func (repo *lahanData) SelectDetailLahan(id int, role string) (lahan.Core, error) {
+	var data Lahan
+	tx := repo.db.Where("id = ?", id).Find(&data)
+	if tx.Error != nil {
+		return lahan.Core{}, tx.Error
+	}
 
-	if role == "mitra" {
+	return data.toCore(), nil
+}
 
-		var data Lahan
-		tx := repo.db.Where("id = ?", id).Preload("Checkout").Find(&data)
+func (repo *lahanData) UpdateLahan(id int, token int, data lahan.Core) (int, error) {
+	var gudangModel modelGudang.Gudang
+	repo.db.Where("user_id = ?", token).Find(&gudangModel)
+	data.GudangID = gudangModel.ID
+
+	dataModel := fromCore(data)
+	tx := repo.db.Model(&Lahan{}).Where("id = ? AND gudang_id = ?", id, data.GudangID).Updates(&dataModel)
+	if tx.Error != nil {
+		return -1, tx.Error
+	}
+	if tx.RowsAffected < 1 {
+		return -1, errors.New("Unauthorized")
+	}
+	return 1, nil
+}
+
+func (repo *lahanData) DeleteData(id int, token int, data lahan.Core) (int, error) {
+	var gudangModel modelGudang.Gudang
+	repo.db.Where("user_id = ?", token).Find(&gudangModel)
+	data.GudangID = gudangModel.ID
+
+	var deleteData Lahan
+	tx := repo.db.Where("id = ? AND gudang_id = ?", id, data.GudangID).Delete(&deleteData)
+	if tx.Error != nil {
+		return -1, tx.Error
+	}
+	if tx.RowsAffected < 1 {
+		return -1, errors.New("Unauthorized")
+	}
+
+	return 1, nil
+}
+
+func (repo *lahanData) SelectLahanClient(token int) ([]lahan.Core, error) {
+	var checkoutData modelCheckout.Checkout
+	if checkoutData.Status == "paid" || checkoutData.Status == "pending" {
+
+		var data []Lahan
+		tx := repo.db.Model(&Lahan{}).Where("id = ?", token).Preload("Checkout").Find(&data)
 		if tx.Error != nil {
-			return lahan.Core{}, tx.Error
+			return nil, tx.Error
 		}
-
-		return data.toCore(), nil
+		return toCoreList(data), nil
 
 	} else {
-
-		var data Lahan
-		tx := repo.db.Where("id = ?", id).Find(&data)
-		if tx.Error != nil {
-			return lahan.Core{}, tx.Error
-		}
-
-		return data.toCore(), nil
+		return nil, errors.New("no have data")
 	}
 }

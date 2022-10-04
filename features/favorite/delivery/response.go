@@ -13,6 +13,7 @@ type FavResponse struct {
 func fromCore(data favorite.Core) FavResponse {
 	return FavResponse{
 		ID:             uint(data.ID),
+		LahanID:        int(data.LahanID),
 		LahanName:      data.LahanName,
 		LahanHarga:     data.LahanHarga,
 		LahanFotoLahan: data.LahanFotoLahan,
