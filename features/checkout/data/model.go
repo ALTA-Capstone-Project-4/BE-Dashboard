@@ -9,17 +9,21 @@ import (
 
 type Checkout struct {
 	gorm.Model
-	FotoBarang       string
-	NamaBarang       string
-	MulaiSewa        time.Time
-	AkhirSewa        time.Time
-	MetodePembayaran string
-	Status           string
-	TotalHarga       int
-	UserID           int
-	LahanID          int
-	User             User  `gorm:"foreignKey:UserID"`
-	Lahan            Lahan `gorm:"foreignKey:LahanID"`
+	FotoBarang        string
+	NamaBarang        string
+	MulaiSewa         time.Time
+	AkhirSewa         time.Time
+	MetodePembayaran  string
+	Status            string
+	TotalHarga        int
+	UserID            int
+	LahanID           int
+	OrderID           string
+	TransactionID     string
+	BillNumber        string
+	TransactionExpire string
+	User              User  `gorm:"foreignKey:UserID"`
+	Lahan             Lahan `gorm:"foreignKey:LahanID"`
 }
 
 type User struct {
@@ -52,35 +56,65 @@ type Lahan struct {
 
 func toCore(data Checkout) checkout.Core {
 	var core = checkout.Core{
-		ID:               int(data.ID),
-		FotoBarang:       data.FotoBarang,
-		NamaBarang:       data.NamaBarang,
-		MulaiSewa:        data.MulaiSewa,
-		AkhirSewa:        data.AkhirSewa,
-		MetodePembayaran: data.MetodePembayaran,
-		Status:           data.Status,
-		TotalHarga:       data.TotalHarga,
-		UserID:           data.UserID,
-		UserName:         data.User.Name,
-		LahanID:          data.LahanID,
-		LahanFoto:        data.Lahan.FotoLahan,
-		LahanNama:        data.Lahan.Nama,
-		LahanHarga:       data.Lahan.Harga,
+		ID:                int(data.ID),
+		FotoBarang:        data.FotoBarang,
+		NamaBarang:        data.NamaBarang,
+		MulaiSewa:         data.MulaiSewa,
+		AkhirSewa:         data.AkhirSewa,
+		MetodePembayaran:  data.MetodePembayaran,
+		Status:            data.Status,
+		TotalHarga:        data.TotalHarga,
+		UserID:            data.UserID,
+		UserName:          data.User.Name,
+		LahanID:           data.LahanID,
+		LahanFoto:         data.Lahan.FotoLahan,
+		LahanNama:         data.Lahan.Nama,
+		LahanHarga:        data.Lahan.Harga,
+		OrderID:           data.OrderID,
+		TransactionID:     data.TransactionID,
+		BillNumber:        data.BillNumber,
+		TransactionExpire: data.TransactionExpire,
 	}
 	return core
 }
 
 func fromCore(dataCore checkout.Core) Checkout {
 	dataModel := Checkout{
-		FotoBarang:       dataCore.FotoBarang,
-		NamaBarang:       dataCore.NamaBarang,
-		MulaiSewa:        dataCore.MulaiSewa,
-		AkhirSewa:        dataCore.AkhirSewa,
-		MetodePembayaran: dataCore.MetodePembayaran,
-		Status:           dataCore.Status,
-		TotalHarga:       dataCore.TotalHarga,
-		LahanID:          dataCore.LahanID,
-		UserID:           dataCore.UserID,
+		FotoBarang:        dataCore.FotoBarang,
+		NamaBarang:        dataCore.NamaBarang,
+		MulaiSewa:         dataCore.MulaiSewa,
+		AkhirSewa:         dataCore.AkhirSewa,
+		MetodePembayaran:  dataCore.MetodePembayaran,
+		Status:            dataCore.Status,
+		TotalHarga:        dataCore.TotalHarga,
+		LahanID:           dataCore.LahanID,
+		UserID:            dataCore.UserID,
+		OrderID:           dataCore.OrderID,
+		TransactionID:     dataCore.TransactionID,
+		BillNumber:        dataCore.BillNumber,
+		TransactionExpire: dataCore.TransactionExpire,
 	}
 	return dataModel
+}
+
+func (data *Checkout) toCoreMidtrans() checkout.Core {
+	return checkout.Core{
+		ID:                int(data.ID),
+		FotoBarang:        data.FotoBarang,
+		NamaBarang:        data.NamaBarang,
+		MulaiSewa:         data.MulaiSewa,
+		AkhirSewa:         data.AkhirSewa,
+		MetodePembayaran:  data.MetodePembayaran,
+		Status:            data.Status,
+		TotalHarga:        data.TotalHarga,
+		UserID:            data.UserID,
+		UserName:          data.User.Name,
+		LahanID:           data.LahanID,
+		LahanFoto:         data.Lahan.FotoLahan,
+		LahanNama:         data.Lahan.Nama,
+		LahanHarga:        data.Lahan.Harga,
+		OrderID:           data.OrderID,
+		TransactionID:     data.TransactionID,
+		TransactionExpire: data.TransactionExpire,
+	}
 }

@@ -17,6 +17,8 @@ type AppConfig struct {
 	DB_NAME     string
 }
 
+const PaymentBankTransferBCA = "BANK_TRANSFER_BCA"
+
 var lock = &sync.Mutex{}
 var config *AppConfig
 
@@ -59,4 +61,9 @@ func initConfig() *AppConfig {
 
 	return &defaultConfig
 
+}
+
+func MidtransServerKey() string {
+	MIDTRANS_SERVER_KEY := os.Getenv("MIDTRANS_EVENT_SERVER_KEY")
+	return MIDTRANS_SERVER_KEY
 }

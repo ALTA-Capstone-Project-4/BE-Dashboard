@@ -1,22 +1,30 @@
 package checkout
 
-import "time"
+import (
+	"time"
+
+	"github.com/midtrans/midtrans-go/coreapi"
+)
 
 type Core struct {
-	ID               int
-	FotoBarang       string
-	NamaBarang       string
-	MulaiSewa        time.Time
-	AkhirSewa        time.Time
-	MetodePembayaran string
-	Status           string
-	TotalHarga       int
-	UserID           int
-	UserName         string
-	LahanID          int
-	LahanFoto        string
-	LahanNama        string
-	LahanHarga       int
+	ID                int
+	FotoBarang        string
+	NamaBarang        string
+	MulaiSewa         time.Time
+	AkhirSewa         time.Time
+	MetodePembayaran  string
+	Status            string
+	TotalHarga        int
+	UserID            int
+	UserName          string
+	LahanID           int
+	LahanFoto         string
+	LahanNama         string
+	LahanHarga        int
+	OrderID           string
+	TransactionID     string
+	BillNumber        string
+	TransactionExpire string
 }
 
 type User struct {
@@ -47,9 +55,15 @@ type Lahan struct {
 }
 
 type UsecaseInterface interface {
+	CreatePaymentBankTransfer(reqPay coreapi.ChargeReq) (*coreapi.ChargeResponse, error)
+	GetHargaLahan(lahan_id int, role string) (int, error)
 	PostCheckoutByFav(data Core) (int, error)
+	PaymentWebHook(orderID, status string) error
 }
 
 type DataInterface interface {
 	AddCheckoutByFav(data Core) (int, error)
+	CreateDataPayment(reqPay coreapi.ChargeReq) (*coreapi.ChargeResponse, error)
+	SelectPayment(orderID string) (Core, error)
+	PaymentDataWebHook(data Core) error
 }
