@@ -32,12 +32,12 @@ func (repo *gudangData) UpdateGudang(id int, data gudang.Core) (int, error) {
 func (repo *gudangData) SelectAllGudang(offset int) ([]gudang.Lahan, error) {
 	var dataGudang []Lahan
 
-	tx := repo.db.Model(&Lahan{}).Offset(offset).Limit(8).Select("panjang, lebar, MIN(harga) as harga, foto_lahan, gudang_id").Group("gudang_id").Find(&dataGudang)
+	tx := repo.db.Model(&Lahan{}).Offset(offset).Limit(8).Select("id,nama,luas,panjang, lebar, MIN(harga) as harga,deskripsi, fasilitas, barang_tdk_diizinkan, foto_lahan, gudang_id").Group("gudang_id").Find(&dataGudang)
 
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-	return toLahanCoreList(dataGudang), nil
+	return toLahanList(dataGudang), nil
 }
 
 func (repo *gudangData) CreatGudang(data gudang.Core) (int, error) {
@@ -82,7 +82,7 @@ func (repo *gudangData) SelectGudangByID(gudang_id int) (gudang.Core, error) {
 	}
 
 	detailGudang := gudangData.toCore()
-	dataLahan := ToLahanList(gudangData.Lahan)
+	dataLahan := toLahanList(gudangData.Lahan)
 	detailGudang.Lahan = dataLahan
 
 	return detailGudang, nil

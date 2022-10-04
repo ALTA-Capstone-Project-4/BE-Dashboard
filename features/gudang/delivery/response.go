@@ -14,11 +14,18 @@ type GudangResponse struct {
 	Lahan     []gudang.Lahan `json:"lahan,omitempty"`
 }
 
-type GudangHomepage struct {
-	GudangID  uint   `json:"gudang_id"`
-	Ukuran    string `json:"ukuran,omitempty"`
-	Harga     int    `json:"harga,omitempty"`
-	FotoLahan string `json:"foto_lahan,omitempty"`
+type DataHome struct {
+	GudangID             int    `json:"gudang_id,omitempty"`
+	ID                   uint   `json:"id_lahan"`
+	Nama                 string `json:"nama,omitempty"`
+	Luas                 string `json:"luas,omitempty"`
+	Panjang              string `json:"panjang,omitempty"`
+	Lebar                string `json:"lebar,omitempty"`
+	Harga                int    `json:"harga,omitempty"`
+	Deskripsi            string `json:"deskripsi,omitempty"`
+	Fasilitas            string `json:"fasilitas,omitempty"`
+	Barang_Tdk_Diizinkan string `json:"barang_tdk_diizinkan,omitempty"`
+	FotoLahan            string `json:"foto_lahan,omitempty"`
 }
 
 func fromCore(data gudang.Core) GudangResponse {
@@ -33,15 +40,6 @@ func fromCore(data gudang.Core) GudangResponse {
 	}
 }
 
-func fromCore_toHomepage(data gudang.Lahan) GudangHomepage {
-	return GudangHomepage{
-		GudangID:  uint(data.GudangID),
-		Ukuran:    data.Panjang + " x " + data.Lebar,
-		Harga:     data.Harga,
-		FotoLahan: data.FotoLahan,
-	}
-}
-
 func fromCoreList(data []gudang.Core) []GudangResponse {
 	var dataRes []GudangResponse
 	for _, v := range data {
@@ -51,10 +49,26 @@ func fromCoreList(data []gudang.Core) []GudangResponse {
 	return dataRes
 }
 
-func fromCore_toHomeList(data []gudang.Lahan) []GudangHomepage {
-	var dataRes []GudangHomepage
+func fromCore_toHome(data gudang.Lahan) DataHome {
+	return DataHome{
+		ID:                   uint(data.ID),
+		Nama:                 data.Nama,
+		Luas:                 data.Luas,
+		Panjang:              data.Panjang,
+		Lebar:                data.Lebar,
+		Harga:                data.Harga,
+		Deskripsi:            data.Deskripsi,
+		Fasilitas:            data.Fasilitas,
+		Barang_Tdk_Diizinkan: data.Barang_Tdk_Diizinkan,
+		FotoLahan:            data.FotoLahan,
+		GudangID:             data.GudangID,
+	}
+}
+
+func fromCore_toHomeList(data []gudang.Lahan) []DataHome {
+	var dataRes []DataHome
 	for _, v := range data {
-		dataRes = append(dataRes, fromCore_toHomepage(v))
+		dataRes = append(dataRes, fromCore_toHome(v))
 	}
 	return dataRes
 }
