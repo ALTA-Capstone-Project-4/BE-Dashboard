@@ -66,25 +66,7 @@ func (data *Gudang) toCore() gudang.Core {
 	}
 }
 
-func (data *Lahan) toLahanCore() gudang.Lahan {
-	return gudang.Lahan{
-		GudangID:  int(data.GudangID),
-		Panjang:   data.Panjang,
-		Lebar:     data.Lebar,
-		Harga:     data.Harga,
-		FotoLahan: data.FotoLahan,
-	}
-}
-
-func toLahanCoreList(data []Lahan) []gudang.Lahan {
-	var dataCore []gudang.Lahan
-	for _, v := range data {
-		dataCore = append(dataCore, v.toLahanCore())
-	}
-	return dataCore
-}
-
-func (data *Lahan) ToLahan() gudang.Lahan {
+func (data *Lahan) toLahan() gudang.Lahan {
 	return gudang.Lahan{
 		ID:                   int(data.ID),
 		Nama:                 data.Nama,
@@ -100,10 +82,10 @@ func (data *Lahan) ToLahan() gudang.Lahan {
 	}
 }
 
-func ToLahanList(data []Lahan) []gudang.Lahan {
+func toLahanList(data []Lahan) []gudang.Lahan {
 	var dataCore []gudang.Lahan
 	for key := range data {
-		dataCore = append(dataCore, data[key].ToLahan())
+		dataCore = append(dataCore, data[key].toLahan())
 	}
 	return dataCore
 }
