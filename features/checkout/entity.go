@@ -7,22 +7,24 @@ import (
 )
 
 type Core struct {
-	ID               int
-	FotoBarang       string
-	NamaBarang       string
-	MulaiSewa        time.Time
-	AkhirSewa        time.Time
-	MetodePembayaran string
-	Status           string
-	TotalHarga       int
-	UserID           int
-	UserName         string
-	LahanID          int
-	LahanFoto        string
-	LahanNama        string
-	LahanHarga       int
-	OrderID          string
-	TransactionID    string
+	ID                int
+	FotoBarang        string
+	NamaBarang        string
+	MulaiSewa         time.Time
+	AkhirSewa         time.Time
+	MetodePembayaran  string
+	Status            string
+	TotalHarga        int
+	UserID            int
+	UserName          string
+	LahanID           int
+	LahanFoto         string
+	LahanNama         string
+	LahanHarga        int
+	OrderID           string
+	TransactionID     string
+	BillNumber        string
+	TransactionExpire string
 }
 
 type User struct {
