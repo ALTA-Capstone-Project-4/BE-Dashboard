@@ -24,8 +24,14 @@ func (usecase *gudangUsecase) PutGudang(id int, data gudang.Core) (int, error) {
 	return 1, nil
 }
 
-func (usecase *gudangUsecase) GetAllGudang() ([]gudang.Lahan, error) {
-	data, err := usecase.gudangData.SelectAllGudang()
+func (usecase *gudangUsecase) GetAllGudang(page int) ([]gudang.Lahan, error) {
+
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * 8
+
+	data, err := usecase.gudangData.SelectAllGudang(offset)
 	if err != nil {
 		return nil, err
 	}
