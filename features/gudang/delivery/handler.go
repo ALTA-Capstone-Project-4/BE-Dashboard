@@ -19,9 +19,9 @@ func New(e *echo.Echo, usecase gudang.UsecaseInterface) {
 	}
 
 	e.PUT("/gudang", handler.PutGudang, middlewares.JWTMiddleware())
-	e.GET("/gudang", handler.GetAllGudang)
+	e.GET("/gudang", handler.GetAllGudang, middlewares.JWTMiddleware())
 	e.POST("/gudang", handler.PostGudang, middlewares.JWTMiddleware())
-	e.GET("/gudang/:id/lahan", handler.GetGudangByID)
+	e.GET("/gudang/:id/lahan", handler.GetGudangByID, middlewares.JWTMiddleware())
 
 }
 
@@ -53,6 +53,16 @@ func (delivery *GudangDelivery) PutGudang(c echo.Context) error {
 }
 
 func (delivery *GudangDelivery) GetAllGudang(c echo.Context) error {
+
+	_, role, errToken := middlewares.ExtractToken(c)
+
+	if role == "mitra" {
+		return c.JSON(400, helper.FailedResponseHelper("Unauthorized"))
+	}
+	if errToken != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Invalid token"))
+	}
+
 	page := c.QueryParam("page")
 	pageCnv, errPage := strconv.Atoi(page)
 
@@ -95,6 +105,15 @@ func (delivery *GudangDelivery) PostGudang(c echo.Context) error {
 }
 
 func (delivery *GudangDelivery) GetGudangByID(c echo.Context) error {
+	_, role, errToken := middlewares.ExtractToken(c)
+
+	if role == "mitra" {
+		return c.JSON(400, helper.FailedResponseHelper("Unauthorized"))
+	}
+	if errToken != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Invalid token"))
+	}
+
 	gudang_id := c.Param("id")
 	idCnv, _ := strconv.Atoi(gudang_id)
 	data, err := delivery.gudangUsecase.GetGudangByID(idCnv)
