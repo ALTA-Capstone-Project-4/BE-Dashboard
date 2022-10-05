@@ -95,7 +95,7 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get harga lahan"))
 	}
 
-	dataCore.TotalHarga = hargaLahan
+	dataCore.TotalHarga = hargaLahan * dataCore.Periode
 
 	currentTime := time.Now()
 	date := currentTime.Format("2006-01-02")
