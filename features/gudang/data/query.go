@@ -93,5 +93,10 @@ func (repo *gudangData) SelectGudangByID(gudang_id int) (gudang.Core, error) {
 	dataLahan := toLahanList(gudangData.Lahan)
 	detailGudang.Lahan = dataLahan
 
+	for key := range detailGudang.Lahan {
+		detailGudang.Lahan[key].Alamat = gudangData.Location
+		detailGudang.Lahan[key].Nama_Gudang = gudangData.Name
+	}
+
 	return detailGudang, nil
 }
