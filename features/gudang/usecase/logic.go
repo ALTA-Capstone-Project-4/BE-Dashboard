@@ -31,10 +31,22 @@ func (usecase *gudangUsecase) GetAllGudang(page int) ([]gudang.Lahan, error) {
 	}
 	offset := (page - 1) * 8
 
-	data, err := usecase.gudangData.SelectAllGudang(offset)
+	data, err := usecase.gudangData.SelectAllLahan(offset)
 	if err != nil {
 		return nil, err
 	}
+
+	for key := range data {
+		dataGudang, err := usecase.gudangData.SelectGudangByID(data[key].GudangID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		data[key].Alamat = dataGudang.Location
+		data[key].Nama_Gudang = dataGudang.Name
+	}
+
 	return data, nil
 }
 
