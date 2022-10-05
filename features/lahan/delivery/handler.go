@@ -25,7 +25,7 @@ func New(e *echo.Echo, usecase lahan.UsecaseInterface) {
 	e.GET("/lahan/:id", handler.GetDetailLahan, middlewares.JWTMiddleware())
 	e.PUT("/lahan/:id", handler.PutLahan, middlewares.JWTMiddleware())
 	e.DELETE("/lahan/:id", handler.DeleteLahan, middlewares.JWTMiddleware())
-	e.GET("/penitip/lahan", handler.GetDetailLahan, middlewares.JWTMiddleware())
+	e.GET("/penitip/lahan", handler.GetLahanClient, middlewares.JWTMiddleware())
 }
 
 func (delivery *LahanDelivery) PostLahan(c echo.Context) error {
@@ -199,7 +199,7 @@ func (delivery *LahanDelivery) GetLahanClient(c echo.Context) error {
 
 	data, err := delivery.lahanUsecase.GetLahanClient(token)
 	if err != nil {
-		return c.JSON(400, helper.FailedResponseHelper("error get data"))
+		return c.JSON(400, helper.FailedResponseHelper(err.Error()))
 	}
 
 	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCoreList(data)))

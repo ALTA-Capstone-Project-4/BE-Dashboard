@@ -39,4 +39,5 @@ type DataInterface interface {
 	UpdateLahan(id int, token int, data Core) (int, error)
 	DeleteData(id int, token int, data Core) (int, error)
 	SelectLahanClient(token int) ([]Core, error)
+	SelectLahan_ByClientID(token int) ([]Core, error)
 }

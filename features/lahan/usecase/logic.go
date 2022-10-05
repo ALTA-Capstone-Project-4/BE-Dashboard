@@ -54,7 +54,7 @@ func (usecase *lahanUsecase) DeleteLahan(id int, token int, data lahan.Core) (in
 }
 
 func (usecase *lahanUsecase) GetLahanClient(token int) ([]lahan.Core, error) {
-	data, err := usecase.lahanData.SelectLahanClient(token)
+	data, err := usecase.lahanData.SelectLahan_ByClientID(token)
 	if err != nil {
 		return nil, err
 	}

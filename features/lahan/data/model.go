@@ -1,6 +1,8 @@
 package data
 
 import (
+	"time"
+	modelCheckout "warehouse/features/checkout/data"
 	"warehouse/features/lahan"
 
 	"gorm.io/gorm"
@@ -19,7 +21,8 @@ type Lahan struct {
 	Status               string
 	FotoLahan            string
 	GudangID             uint
-	Gudang               Gudang
+	Gudang               Gudang `gorm:"foreignKey:GudangID"`
+	Checkout             modelCheckout.Checkout
 }
 
 type Gudang struct {
@@ -30,6 +33,25 @@ type Gudang struct {
 	Location  string
 	UserID    uint
 	Lahan     []Lahan
+}
+
+type Checkout struct {
+	gorm.Model
+	FotoBarang        string
+	NamaBarang        string
+	MulaiSewa         time.Time
+	AkhirSewa         time.Time
+	Periode           int
+	MetodePembayaran  string
+	Status            string
+	TotalHarga        int
+	UserID            int
+	LahanID           int
+	OrderID           string
+	TransactionID     string
+	BillNumber        string
+	TransactionExpire string
+	Lahan             Lahan
 }
 
 func fromCore(dataCore lahan.Core) Lahan {
@@ -71,6 +93,14 @@ func toCoreList(data []Lahan) []lahan.Core {
 	var dataCore []lahan.Core
 	for key := range data {
 		dataCore = append(dataCore, data[key].toCore())
+	}
+	return dataCore
+}
+
+func fromCheckout_toLahanPenitipList(data []Checkout) []lahan.Core {
+	var dataCore []lahan.Core
+	for key := range data {
+		dataCore = append(dataCore, data[key].Lahan.toCore())
 	}
 	return dataCore
 }
