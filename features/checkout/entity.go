@@ -56,8 +56,8 @@ type Lahan struct {
 }
 
 type UsecaseInterface interface {
-	CreatePaymentBankTransfer(reqPay coreapi.ChargeReq) (*coreapi.ChargeResponse, error)
-	GetHargaLahan(lahan_id int, role string) (int, error)
+	CreatePaymentBankTransfer(lahan_id, mitra_id int, reqPay coreapi.ChargeReq) (*coreapi.ChargeResponse, error)
+	GetDataLahan(lahan_id int, role string) (int, int, error)
 	PostCheckoutByFav(data Core) (int, error)
 	PaymentWebHook(orderID, status string) error
 }

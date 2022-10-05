@@ -37,7 +37,7 @@ func (repo *lahanData) CreateLahan(data lahan.Core, user_id int) (int, error) {
 
 func (repo *lahanData) SelectDetailLahan(id int, role string) (lahan.Core, error) {
 	var data Lahan
-	tx := repo.db.Where("id = ?", id).Find(&data)
+	tx := repo.db.Where("id = ?", id).Preload("Gudang").Find(&data)
 	if tx.Error != nil {
 		return lahan.Core{}, tx.Error
 	}

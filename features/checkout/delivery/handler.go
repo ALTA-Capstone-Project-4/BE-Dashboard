@@ -89,7 +89,7 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 	dataCore.UserID = token
 	dataCore.FotoBarang = image
 
-	hargaLahan, errHarga := delivery.checkoutUsecase.GetHargaLahan(dataCheckout.LahanID, role)
+	hargaLahan, mitra_id, errHarga := delivery.checkoutUsecase.GetDataLahan(dataCheckout.LahanID, role)
 
 	if errHarga != nil {
 		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get harga lahan"))
@@ -127,7 +127,7 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 		}
 	}
 
-	detailPay, errPay := delivery.checkoutUsecase.CreatePaymentBankTransfer(inputPay)
+	detailPay, errPay := delivery.checkoutUsecase.CreatePaymentBankTransfer(dataCheckout.LahanID, mitra_id, inputPay)
 
 	if errPay != nil {
 		return c.JSON(500, helper.FailedResponseHelper("error insert data to midtrans"))

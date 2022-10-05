@@ -16,6 +16,7 @@ type Lahan struct {
 	Deskripsi            string
 	Fasilitas            string
 	Barang_Tdk_Diizinkan string
+	Status               string
 	FotoLahan            string
 	GudangID             uint
 	Gudang               Gudang
@@ -43,6 +44,7 @@ func fromCore(dataCore lahan.Core) Lahan {
 		Barang_Tdk_Diizinkan: dataCore.Barang_Tdk_Diizinkan,
 		FotoLahan:            dataCore.FotoLahan,
 		GudangID:             dataCore.GudangID,
+		Status:               dataCore.Status,
 	}
 	return dataModel
 }
@@ -60,6 +62,8 @@ func (data *Lahan) toCore() lahan.Core {
 		Barang_Tdk_Diizinkan: data.Barang_Tdk_Diizinkan,
 		FotoLahan:            data.FotoLahan,
 		GudangID:             data.GudangID,
+		Status:               data.Status,
+		Gudang:               lahan.Gudang{UserID: data.Gudang.UserID},
 	}
 }
 
