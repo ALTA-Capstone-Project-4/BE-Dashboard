@@ -20,6 +20,8 @@ func (usecase *lahanUsecase) PostLahan(data lahan.Core, user_id int) (int, error
 		return -1, errors.New("tidak boleh ada yang dikosongkan")
 	}
 
+	data.Status = "tidak disewa"
+
 	row, err := usecase.lahanData.CreateLahan(data, user_id)
 
 	return row, err
