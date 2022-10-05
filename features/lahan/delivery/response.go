@@ -14,6 +14,7 @@ type LahanResponse struct {
 	Deskripsi            string `json:"deskripsi,omitempty"`
 	Fasilitas            string `json:"fasilitas,omitempty"`
 	Barang_Tdk_Diizinkan string `json:"barang_tdk_diizinkan,omitempty"`
+	Status               string `json:"status,omitempty"`
 	FotoLahan            string `json:"foto_lahan,omitempty"`
 	GudangID             uint   `json:"gudang_id,omitempty"`
 }
@@ -29,6 +30,7 @@ func fromCore(data lahan.Core) LahanResponse {
 		Deskripsi:            data.Deskripsi,
 		Fasilitas:            data.Fasilitas,
 		Barang_Tdk_Diizinkan: data.Barang_Tdk_Diizinkan,
+		Status:               data.Status,
 		FotoLahan:            data.FotoLahan,
 		GudangID:             data.GudangID,
 	}
