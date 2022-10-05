@@ -36,22 +36,26 @@ func (usecase *checkoutUsecase) PostCheckoutByFav(data checkout.Core) (int, erro
 	return row, nil
 }
 
-func (usecase *checkoutUsecase) GetHargaLahan(lahan_id int, role string) (int, error) {
+func (usecase *checkoutUsecase) GetDataLahan(lahan_id int, role string) (int, int, error) {
 
 	corelahan, errlahanHarga := usecase.lahanData.SelectDetailLahan(lahan_id, role)
 	if errlahanHarga != nil {
-		return 0, errlahanHarga
+		return 0, 0, errlahanHarga
 	}
 
-	return corelahan.Harga, nil
+	return corelahan.Harga, int(corelahan.Gudang.UserID), nil
 }
 
-func (usecase *checkoutUsecase) CreatePaymentBankTransfer(reqPay coreapi.ChargeReq) (*coreapi.ChargeResponse, error) {
+func (usecase *checkoutUsecase) CreatePaymentBankTransfer(lahan_id, mitra_id int, reqPay coreapi.ChargeReq) (*coreapi.ChargeResponse, error) {
 	createPay, errCreatePay := usecase.checkoutData.CreateDataPayment(reqPay)
 	if errCreatePay != nil {
 		return nil, errors.New("failed get response payment")
 	}
 
+	dataLahan, _ := usecase.lahanData.SelectDetailLahan(lahan_id, "mitra")
+	dataLahan.Status = "disewa"
+
+	usecase.lahanData.UpdateLahan(lahan_id, mitra_id, dataLahan)
 	return createPay, nil
 }
 
