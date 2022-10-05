@@ -79,17 +79,26 @@ func (repo *lahanData) DeleteData(id int, token int, data lahan.Core) (int, erro
 }
 
 func (repo *lahanData) SelectLahanClient(token int) ([]lahan.Core, error) {
-	var checkoutData modelCheckout.Checkout
-	if checkoutData.Status == "paid" || checkoutData.Status == "pending" {
+
+	var cek modelCheckout.Checkout
+
+	if cek.UserID == token && cek.Status == "" {
+		var gudangModel modelGudang.Gudang
 
 		var data []Lahan
-		tx := repo.db.Model(&Lahan{}).Where("id = ?", token).Preload("Checkout").Find(&data)
+
+		tx := repo.db.Model(&Lahan{}).Where("id = ?", gudangModel.UserID).Preload("Gudang").Preload("Checkout").Find(&data)
+
+		// tx := repo.db.Model(&Lahan{}).Joins("Lahan").Joins("Lahan.Gudang").Find(&dataRes)
+		// tx := repo.db.Preload("Gudangs", "user_id = ?", token).Preload("Gudangs.Lahans").Find(&dataRes)
+
 		if tx.Error != nil {
 			return nil, tx.Error
 		}
+
 		return toCoreList(data), nil
 
 	} else {
-		return nil, errors.New("no have data")
+		return nil, errors.New("no data lahan penitip")
 	}
 }

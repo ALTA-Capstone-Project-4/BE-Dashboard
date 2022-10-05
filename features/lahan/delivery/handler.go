@@ -190,7 +190,7 @@ func (delivery *LahanDelivery) DeleteLahan(c echo.Context) error {
 func (delivery *LahanDelivery) GetLahanClient(c echo.Context) error {
 	token, role, errToken := middlewares.ExtractToken(c)
 
-	if role != "admin" {
+	if role != "penitip" {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("Unautorized"))
 	}
 	if errToken != nil {
