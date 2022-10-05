@@ -107,7 +107,7 @@ func (delivery *GudangDelivery) PostGudang(c echo.Context) error {
 func (delivery *GudangDelivery) GetGudangByID(c echo.Context) error {
 	_, role, errToken := middlewares.ExtractToken(c)
 
-	if role == "mitra" {
+	if role == "admin" {
 		return c.JSON(400, helper.FailedResponseHelper("Unauthorized"))
 	}
 	if errToken != nil {
