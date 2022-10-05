@@ -25,7 +25,8 @@ type User struct {
 }
 
 type Lahan struct {
-	ID                   int `json:"lahan_id,omitempty"`
+	ID                   int
+	Nama_Gudang          string
 	Nama                 string
 	Luas                 string
 	Panjang              string
@@ -36,6 +37,7 @@ type Lahan struct {
 	Barang_Tdk_Diizinkan string
 	FotoLahan            string
 	GudangID             int
+	Alamat               string
 }
 
 type UsecaseInterface interface {
@@ -47,7 +49,7 @@ type UsecaseInterface interface {
 
 type DataInterface interface {
 	UpdateGudang(id int, data Core) (int, error)
-	SelectAllGudang(offset int) ([]Lahan, error)
+	SelectAllLahan(offset int) ([]Lahan, error)
 	CreatGudang(data Core) (int, error)
 	SelectGudangByID(gudang_id int) (Core, error)
 }

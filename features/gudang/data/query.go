@@ -29,14 +29,22 @@ func (repo *gudangData) UpdateGudang(id int, data gudang.Core) (int, error) {
 
 }
 
-func (repo *gudangData) SelectAllGudang(offset int) ([]gudang.Lahan, error) {
+func (repo *gudangData) SelectAllLahan(offset int) ([]gudang.Lahan, error) {
 	var dataGudang []Lahan
 
-	tx := repo.db.Model(&Lahan{}).Offset(offset).Limit(8).Select("id,nama,luas,panjang, lebar, MIN(harga) as harga,deskripsi, fasilitas, barang_tdk_diizinkan, foto_lahan, gudang_id").Group("gudang_id").Find(&dataGudang)
+	tx_hargaMin := repo.db.Model(&Lahan{}).Select("gudang_id, MIN(harga) as harga").Group("gudang_id").Find(&dataGudang)
 
-	if tx.Error != nil {
-		return nil, tx.Error
+	if tx_hargaMin.Error != nil {
+		return nil, tx_hargaMin.Error
 	}
+
+	for key := range dataGudang {
+		tx := repo.db.Model(&Lahan{}).Offset(offset).Limit(8).Where("harga = ? AND gudang_id = ?", dataGudang[key].Harga, dataGudang[key].GudangID).Find(&dataGudang[key])
+		if tx.Error != nil {
+			return nil, tx.Error
+		}
+	}
+
 	return toLahanList(dataGudang), nil
 }
 

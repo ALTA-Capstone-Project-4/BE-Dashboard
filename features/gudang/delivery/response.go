@@ -17,6 +17,7 @@ type GudangResponse struct {
 type DataHome struct {
 	GudangID             int    `json:"gudang_id,omitempty"`
 	ID                   uint   `json:"id_lahan"`
+	Nama_Gudang          string `json:"nama_gudang,omitempty"`
 	Nama                 string `json:"nama,omitempty"`
 	Luas                 string `json:"luas,omitempty"`
 	Panjang              string `json:"panjang,omitempty"`
@@ -26,6 +27,7 @@ type DataHome struct {
 	Fasilitas            string `json:"fasilitas,omitempty"`
 	Barang_Tdk_Diizinkan string `json:"barang_tdk_diizinkan,omitempty"`
 	FotoLahan            string `json:"foto_lahan,omitempty"`
+	Alamat               string `json:"address,omitempty"`
 }
 
 func fromCore(data gudang.Core) GudangResponse {
@@ -62,6 +64,8 @@ func fromCore_toHome(data gudang.Lahan) DataHome {
 		Barang_Tdk_Diizinkan: data.Barang_Tdk_Diizinkan,
 		FotoLahan:            data.FotoLahan,
 		GudangID:             data.GudangID,
+		Alamat:               data.Alamat,
+		Nama_Gudang:          data.Nama_Gudang,
 	}
 }
 
