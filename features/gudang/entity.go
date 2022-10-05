@@ -35,6 +35,7 @@ type Lahan struct {
 	Deskripsi            string
 	Fasilitas            string
 	Barang_Tdk_Diizinkan string
+	Status               string
 	FotoLahan            string
 	GudangID             int
 	Alamat               string

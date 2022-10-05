@@ -40,6 +40,7 @@ type Lahan struct {
 	Deskripsi            string
 	Fasilitas            string
 	Barang_Tdk_Diizinkan string
+	Status               string
 	FotoLahan            string
 	GudangID             uint
 }
@@ -77,6 +78,7 @@ func (data *Lahan) toLahan() gudang.Lahan {
 		Deskripsi:            data.Deskripsi,
 		Fasilitas:            data.Fasilitas,
 		Barang_Tdk_Diizinkan: data.Barang_Tdk_Diizinkan,
+		Status:               data.Status,
 		FotoLahan:            data.FotoLahan,
 		GudangID:             int(data.GudangID),
 	}
