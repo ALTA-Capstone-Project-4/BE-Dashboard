@@ -13,6 +13,7 @@ type Checkout struct {
 	NamaBarang        string
 	MulaiSewa         time.Time
 	AkhirSewa         time.Time
+	Periode           int
 	MetodePembayaran  string
 	Status            string
 	TotalHarga        int
@@ -61,6 +62,7 @@ func toCore(data Checkout) checkout.Core {
 		NamaBarang:        data.NamaBarang,
 		MulaiSewa:         data.MulaiSewa,
 		AkhirSewa:         data.AkhirSewa,
+		Periode:           data.Periode,
 		MetodePembayaran:  data.MetodePembayaran,
 		Status:            data.Status,
 		TotalHarga:        data.TotalHarga,
@@ -84,6 +86,7 @@ func fromCore(dataCore checkout.Core) Checkout {
 		NamaBarang:        dataCore.NamaBarang,
 		MulaiSewa:         dataCore.MulaiSewa,
 		AkhirSewa:         dataCore.AkhirSewa,
+		Periode:           dataCore.Periode,
 		MetodePembayaran:  dataCore.MetodePembayaran,
 		Status:            dataCore.Status,
 		TotalHarga:        dataCore.TotalHarga,

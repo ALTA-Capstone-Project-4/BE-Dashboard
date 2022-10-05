@@ -12,6 +12,7 @@ type Core struct {
 	NamaBarang        string
 	MulaiSewa         time.Time
 	AkhirSewa         time.Time
+	Periode           int
 	MetodePembayaran  string
 	Status            string
 	TotalHarga        int
