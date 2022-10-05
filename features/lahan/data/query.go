@@ -102,3 +102,15 @@ func (repo *lahanData) SelectLahanClient(token int) ([]lahan.Core, error) {
 		return nil, errors.New("no data lahan penitip")
 	}
 }
+
+func (repo *lahanData) SelectLahan_ByClientID(token int) ([]lahan.Core, error) {
+
+	var data []Checkout
+
+	tx := repo.db.Where("user_id = ?", token).Preload("Lahan").Group("lahan_id").Find(&data)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return fromCheckout_toLahanPenitipList(data), nil
+}
