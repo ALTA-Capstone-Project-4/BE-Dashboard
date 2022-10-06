@@ -54,10 +54,6 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("failed format tanggal mulai sewa"))
 	}
-	akhirSewa, err := time.Parse(layout_date, fmt.Sprintf("%sT00:00", dataCheckout.AkhirSewa))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("failed format tanggal akhir sewa"))
-	}
 
 	imageData, imageInfo, imageErr := c.Request().FormFile("foto")
 
@@ -85,7 +81,7 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 
 	dataCore := toCore(dataCheckout)
 	dataCore.MulaiSewa = mulaiSewa
-	dataCore.AkhirSewa = akhirSewa
+	dataCore.AkhirSewa = mulaiSewa.AddDate(0, dataCore.Periode, 0)
 	dataCore.UserID = token
 	dataCore.FotoBarang = image
 
