@@ -103,14 +103,27 @@ func (repo *lahanData) SelectLahanClient(token int) ([]lahan.Core, error) {
 	}
 }
 
-func (repo *lahanData) SelectLahan_ByClientID(token int) ([]lahan.Core, error) {
+func (repo *lahanData) SelectLahan_ByClientID(token int) ([]lahan.LahanPenitip, error) {
 
-	var data []Checkout
+	var dataCheckout []Checkout
 
-	tx := repo.db.Where("user_id = ?", token).Preload("Lahan").Group("lahan_id").Find(&data)
-	if tx.Error != nil {
-		return nil, tx.Error
+	tx_data := repo.db.Where("user_id = ?", token).Preload("Lahan").Find(&dataCheckout)
+	if tx_data.Error != nil {
+		return nil, tx_data.Error
 	}
 
-	return fromCheckout_toLahanPenitipList(data), nil
+	dataLahan := fromCheckout_toLahan(dataCheckout)
+	var dataGudang []Gudang
+	for _, v := range dataLahan {
+		var tempGudang Gudang
+		tx_gudang := repo.db.Where("id", v.GudangID).Find(&tempGudang)
+
+		if tx_gudang.Error != nil {
+			return nil, tx_gudang.Error
+		}
+		dataGudang = append(dataGudang, tempGudang)
+	}
+
+	dataLahanPenitip := toLahanPenitipList(dataCheckout, dataLahan, dataGudang)
+	return dataLahanPenitip, nil
 }

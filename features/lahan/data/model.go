@@ -97,10 +97,44 @@ func toCoreList(data []Lahan) []lahan.Core {
 	return dataCore
 }
 
-func fromCheckout_toLahanPenitipList(data []Checkout) []lahan.Core {
-	var dataCore []lahan.Core
+func fromCheckout_toLahan(data []Checkout) []Lahan {
+	var dataCore []Lahan
 	for key := range data {
-		dataCore = append(dataCore, data[key].Lahan.toCore())
+		dataCore = append(dataCore, data[key].Lahan)
 	}
+	return dataCore
+}
+
+func toLahanPenitip_FromCheckout(dataCheckout Checkout) lahan.LahanPenitip {
+	dataModel := lahan.LahanPenitip{
+		CheckoutID:  int(dataCheckout.ID),
+		NamaBarang:  dataCheckout.NamaBarang,
+		BillNumber:  dataCheckout.BillNumber,
+		StatusBayar: dataCheckout.Status,
+		MulaiSewa:   dataCheckout.MulaiSewa,
+		AkhirSewa:   dataCheckout.AkhirSewa,
+	}
+
+	return dataModel
+}
+
+func toLahanPenitipList(dataCheckout []Checkout, dataLahan []Lahan, dataGudang []Gudang) []lahan.LahanPenitip {
+	var dataCore []lahan.LahanPenitip
+
+	for _, v := range dataCheckout {
+		dataCore = append(dataCore, toLahanPenitip_FromCheckout(v))
+	}
+
+	for key := 0; key < len(dataCore); key++ {
+
+		dataCore[key].LahanID = int(dataLahan[key].ID)
+		dataCore[key].NamaLahan = dataLahan[key].Nama
+		dataCore[key].LuasLahan = dataLahan[key].Panjang + " x " + dataLahan[key].Lebar
+		dataCore[key].GudangID = int(dataGudang[key].ID)
+		dataCore[key].NamaGudang = dataGudang[key].Name
+		dataCore[key].AlamatGudang = dataGudang[key].Location
+
+	}
+
 	return dataCore
 }
