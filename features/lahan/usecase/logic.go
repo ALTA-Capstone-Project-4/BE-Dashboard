@@ -23,8 +23,10 @@ func (usecase *lahanUsecase) PostLahan(data lahan.Core, user_id int) (int, error
 	data.Status = "tidak disewa"
 
 	row, err := usecase.lahanData.CreateLahan(data, user_id)
-
-	return row, err
+	if err != nil || row < 1 {
+		return -1, err
+	}
+	return 1, nil
 }
 
 func (usecase *lahanUsecase) GetDetailLahan(id int, role string) (lahan.Core, error) {

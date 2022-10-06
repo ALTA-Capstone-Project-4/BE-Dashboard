@@ -11,15 +11,19 @@ info:
   title: Warehouse App API
   
 tags:
- 
   - name: Auth
     description: Authentication
   - name: User
     description: User Controller
-  - name: Lahan
-    description: Lahan Controller
   - name: Gudang
     description: Gudang Controller
+  - name: Lahan
+    description: Lahan Controller
+  - name: Favorite
+    description: Favorite Controller
+  - name: Order
+    description: Order Controller
+  
     
 paths:
   ####################################
@@ -29,7 +33,7 @@ paths:
     post:
       tags:
         - Auth
-      summary: login user
+      summary: mitra & penitip login
       parameters:
       - in: query
         name: role
@@ -81,7 +85,7 @@ paths:
     post:
       tags:
         - Auth
-      summary: register user
+      summary: mitra & penitip register
       parameters:
       - in: query
         name: role
@@ -143,12 +147,13 @@ paths:
  
   ####################################
   #  USER
-  ####################################    
-  /admin/verify:
+  ####################################
+      
+  /mitra/unverify:
     get:
       tags:
         - User
-      summary: see all request mitra
+      summary: admin menampilkan list mitra yang belum di verifikasi
       security:
         - JWTAuth: []
       responses:
@@ -186,16 +191,16 @@ paths:
                     status: "failed",
                     message: "get all data unverified mitra fail"
                   }    
-  /admin/verify/{id}:  
+  /mitra/verify/{id}:  
     put:
       tags:
         - User
-      summary: verify mitra
+      summary: admin memverifikasi mitra yang mendaftar
       security:
         - JWTAuth: []
       parameters:
         - name: id
-          description: id of mitra
+          description: id_mitra
           in: path
           schema:
             type: integer
@@ -243,11 +248,11 @@ paths:
                     status: "failed",
                     message: "verification fail"
                   }
-  /admin/mitra:
+  /mitra/verified:
     get:
       tags:
         - User
-      summary: see all verified mitra
+      summary: admin menampilkan list mitra yang sudah di verifikasi
       security:
         - JWTAuth: []
       responses:
@@ -285,16 +290,16 @@ paths:
                     status: "failed",
                     message: "get all data mitra fail"
                   }
-  /admin/mitra/{id}:
+  /mitra/{id}:
     get:
       tags:
         - User
-      summary: see detail mitra profile
+      summary: admin melihat detail mitra
       security:
         - JWTAuth: []
       parameters:
         - name: id
-          description: id of mitra
+          description: id_mitra
           in: path
           schema:
             type: integer
@@ -336,17 +341,16 @@ paths:
                   value: {
                     status: "failed",
                     message: "get detail mitra fail"
-                    
                   }
     delete:
       tags:
         - User
-      summary: delete verified mitra
+      summary: admin menghapus akun mitra
       security:
         - JWTAuth: []
       parameters:
         - name: id
-          description: id of verified mitra
+          description: id_mitra
           in: path
           schema:
             type: integer
@@ -379,16 +383,454 @@ paths:
                     status: "failed",
                     message: "failed delete"
                   }
-  
+  /mitra:
+    get:
+      tags:
+        - User
+      summary: mitra melihat profil mitra
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: Get Detail Verified Mitra
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseDetailMitra'
+              examples:
+                response1:
+                  description: response success
+                  value:
+                    status: "success"
+                    message: "get detail mitra success"
+                    data: {
+                          id: 1,
+                          name: "new user",
+                          address: "Bali",
+                          no_handphone: "085712344321",
+                          email : "user@mail.com",
+                          file_ktp : "user_ktp.jpg",
+                          profile_photo: "profile_photo.jpg"  ,
+                          gudang_name: "fatmawati warehouse",
+                          gudang_location: "bandung"
+                        }                 
+        '400':
+          description: Fail Get All User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "get detail mitra fail"
+                    
+                  }
+    put:
+      tags:
+        - User
+      summary: mitra mengedit profil mitra
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: id_mitra
+          in: path
+          schema:
+            type: integer
+            example: 1
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/verifyRequest'
+            examples:
+              verified:
+                summary: example of verified
+                value:
+                  verify: "yes"
+              rejected:
+                summary: example of rejected
+                value:
+                  verify: "no"
+      responses:
+        '200':
+          description: Success Verify
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseSuccess'
+              examples:
+                response1:
+                  description: response success
+                  value: {
+                    status: "success",
+                    message: "verification success"
+                  }
+        '400':
+          description: Fail Update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "verification fail"
+                  }
+  /penitip:
+    get:
+      tags:
+        - User
+      summary: penitip melihat profil penitip
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: Get Detail Verified Mitra
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseDetailMitra'
+              examples:
+                response1:
+                  description: response success
+                  value:
+                    status: "success"
+                    message: "get detail mitra success"
+                    data: {
+                          id: 1,
+                          name: "new user",
+                          address: "Bali",
+                          no_handphone: "085712344321",
+                          email : "user@mail.com",
+                          file_ktp : "user_ktp.jpg",
+                          profile_photo: "profile_photo.jpg"  ,
+                          gudang_name: "fatmawati warehouse",
+                          gudang_location: "bandung"
+                        }                 
+        '400':
+          description: Fail Get All User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "get detail mitra fail"
+                    
+                  }
+    put:
+      tags:
+        - User
+      summary: penitip mengedit profil penitip
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: id_mitra
+          in: path
+          schema:
+            type: integer
+            example: 1
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/verifyRequest'
+            examples:
+              verified:
+                summary: example of verified
+                value:
+                  verify: "yes"
+              rejected:
+                summary: example of rejected
+                value:
+                  verify: "no"
+      responses:
+        '200':
+          description: Success Verify
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseSuccess'
+              examples:
+                response1:
+                  description: response success
+                  value: {
+                    status: "success",
+                    message: "verification success"
+                  }
+        '400':
+          description: Fail Update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "verification fail"
+                  }
+    delete:
+      tags:
+        - User
+      summary: penitip menghapus akun penitip
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: id_mitra
+          in: path
+          schema:
+            type: integer
+            example: 1
+          required: true
+      responses:
+        '200':
+          description: Success Delete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseSuccess'
+              examples:
+                response1:
+                  description: response success
+                  value: {
+                    status: "success",
+                    message: "success delete"
+                  }
+        '400':
+          description: Fail Delete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "failed delete"
+                  }
+
+  ####################################
+  #  GUDANG
+  ####################################
+  /gudang:
+    post:
+      tags:
+        - Gudang
+      summary: mitra menambahkan gudang
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/requestLahan'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestLahan'
+            example:
+              nama: "fatmawati gudang"
+              luas: "42m"
+              panjang: "7m"
+              lebar : "6m"
+              harga : 1200000
+              tentang_gudang: "berbentuk ruangan bisa dikunci"
+              fasilitas: "cctv"
+              barang_yang_tidak_diizinkan: "benda tajam"
+              photo_lahan: "photo_lahan.jpg"
+      responses:
+        '200':
+          description: Success add lahan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseSuccess'
+              examples:
+                response1:
+                  description: response success
+                  value: {
+                    status: "success",
+                    message: "success add lahan",
+                  }
+        '400':
+          description: Fail Add Lahan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "failed add lahan"
+                  }
+    put:
+      tags:
+        - Gudang
+      summary: mitra mengedit gudang
+      security:
+        - JWTAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/verifyRequest'
+            examples:
+              verified:
+                summary: example of verified
+                value:
+                  verify: "yes"
+              rejected:
+                summary: example of rejected
+                value:
+                  verify: "no"
+      responses:
+        '200':
+          description: Success Verify
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseSuccess'
+              examples:
+                response1:
+                  description: response success
+                  value: {
+                    status: "success",
+                    message: "verification success"
+                  }
+        '400':
+          description: Fail Update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "verification fail"
+                  }
+    get:
+      tags:
+        - Gudang
+      summary: menampilkan semua daftar gudang pada homepage
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: Get All Gudang
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseAllGudang'
+              examples:
+                response1:
+                  description: response success
+                  value:
+                    status: "success"
+                    message: "get all gudang success"
+                    data: 
+                        [
+                           {
+                            photo_gudang: "photo_gudang.jpg",
+                            name: "fatmawati warehouse",
+                            harga: 1200000
+                          },
+                          {
+                            photo_gudang: "photo_gudang.jpg",
+                            name: "lembang warehouse",
+                            harga: 1000000
+                          } 
+                        ]                          
+        '400':
+          description: Fail Get All Gudang
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "get all data mitra fail"
+                  }
+  /gudang/{id}/lahan:
+    get:
+      tags:
+        - Gudang
+      summary: melihat list lahan pada salah satu gudang
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: Get List Lahan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseAllGudang'
+              examples:
+                response1:
+                  description: response success
+                  value:
+                    status: "success"
+                    message: "get list lahan success"
+                    data: 
+                        [
+                           {
+                            photo_gudang: "photo_gudang.jpg",
+                            name: "fatmawati warehouse 300m",
+                            harga: 1200000
+                          },
+                          {
+                            photo_gudang: "photo_gudang.jpg",
+                            name: "fatmawati warehouse 100m",
+                            harga: 1000000
+                          } 
+                        ]                          
+        '400':
+          description: Fail Get List Lahan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "get list lahan fail"
+                  }
   
   ####################################
   #  LAHAN
-  #################################### 
+  ####################################
   /lahan:
     post:
       tags:
         - Lahan
-      summary: add gudang
+      summary: mitra menambahkan lahan
       security:
         - JWTAuth: []
       requestBody:
@@ -441,36 +883,43 @@ paths:
     get:
       tags:
         - Lahan
-      summary: see detail lahan
+      summary: mitra & penitip menampilkan detail lahan
       security:
         - JWTAuth: []
+      parameters:
+        - name: id
+          description: id_lahan
+          in: path
+          schema:
+            type: integer
+            example: 1
+          required: true
       responses:
         '200':
-          description: Get Detail Lahan
+          description: Get Detail Verified Mitra
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/responseDetailLahan'
+                $ref: '#/components/schemas/responseDetailMitra'
               examples:
                 response1:
                   description: response success
                   value:
                     status: "success"
-                    message: "get detail lahan success"
-                    data:  
-                        luas: "200m"
-                        address: "bandung"                  
-                        barang_yang_tidak_diizinkan: "benda tajam"
-                        lain_lain: ""
-                        photo_lahan: "photo_lahan.jpg"
-                        harga: 1200000
-                        nama_penyewa: "dian"
-                        tanggal_mulai_sewa: "2022-01-01"
-                        tanggal_akhir_sewa: "2022_02-01"
-                        photo_product: "photo_product.jpg"
-                        alamat_client: "alamat_clien"                   
+                    message: "get detail mitra success"
+                    data: {
+                          id: 1,
+                          name: "new user",
+                          address: "Bali",
+                          no_handphone: "085712344321",
+                          email : "user@mail.com",
+                          file_ktp : "user_ktp.jpg",
+                          profile_photo: "profile_photo.jpg"  ,
+                          gudang_name: "fatmawati warehouse",
+                          gudang_location: "bandung"
+                        }                 
         '400':
-          description: Fail Get All Gudang
+          description: Fail Get All User
           content:
             application/json:
               schema:
@@ -480,12 +929,167 @@ paths:
                   description: response fail
                   value: {
                     status: "failed",
-                    message: "get detail lahan fail"
+                    message: "get detail mitra fail"
                   }
     put:
       tags:
         - Lahan
-      summary: update lahan
+      summary: mitra mengupdate data lahan
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: id_lahan
+          in: path
+          schema:
+            type: integer
+            example: 1
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/verifyRequest'
+            examples:
+              verified:
+                summary: example of verified
+                value:
+                  verify: "yes"
+              rejected:
+                summary: example of rejected
+                value:
+                  verify: "no"
+      responses:
+        '200':
+          description: Success Verify
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseSuccess'
+              examples:
+                response1:
+                  description: response success
+                  value: {
+                    status: "success",
+                    message: "verification success"
+                  }
+        '400':
+          description: Fail Update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "verification fail"
+                  }
+    delete:
+      tags:
+        - Lahan
+      summary: mitra menghapus lahan by id
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: id_lahan
+          in: path
+          schema:
+            type: integer
+            example: 1
+          required: true
+      responses:
+        '200':
+          description: Success Delete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseSuccess'
+              examples:
+                response1:
+                  description: response success
+                  value: {
+                    status: "success",
+                    message: "success delete"
+                  }
+        '400':
+          description: Fail Delete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "failed delete"
+                  }
+  /penitip/lahan:
+    get:
+      tags:
+        - Lahan
+      summary: penitip melihat produknya berada di lahan mana saja 
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: id_lahan
+          in: path
+          schema:
+            type: integer
+            example: 1
+          required: true
+      responses:
+        '200':
+          description: Get Detail Verified Mitra
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseDetailMitra'
+              examples:
+                response1:
+                  description: response success
+                  value:
+                    status: "success"
+                    message: "get detail mitra success"
+                    data: {
+                          id: 1,
+                          name: "new user",
+                          address: "Bali",
+                          no_handphone: "085712344321",
+                          email : "user@mail.com",
+                          file_ktp : "user_ktp.jpg",
+                          profile_photo: "profile_photo.jpg"  ,
+                          gudang_name: "fatmawati warehouse",
+                          gudang_location: "bandung"
+                        }                 
+        '400':
+          description: Fail Get All User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "get detail mitra fail"
+                    
+                  }
+ 
+  ####################################
+  #  FAVORITE
+  ####################################
+  /favorite:
+    post:
+      tags:
+        - Favorite
+      summary: penitip memasukkan lahan ke halaman favorite
       security:
         - JWTAuth: []
       requestBody:
@@ -509,7 +1113,7 @@ paths:
               photo_lahan: "photo_lahan.jpg"
       responses:
         '200':
-          description: Success update lahan
+          description: Success add lahan
           content:
             application/json:
               schema:
@@ -519,10 +1123,10 @@ paths:
                   description: response success
                   value: {
                     status: "success",
-                    message: "success update lahan",
+                    message: "success add lahan",
                   }
         '400':
-          description: Fail Update Lahan
+          description: Fail Add Lahan
           content:
             application/json:
               schema:
@@ -532,17 +1136,68 @@ paths:
                   description: response fail
                   value: {
                     status: "failed",
-                    message: "failed update lahan"
+                    message: "failed add lahan"
                   }
-    delete:
+    get:
       tags:
-        - Lahan
-      summary: delete lahan
+        - Favorite
+      summary: penitip melihat daftar lahan pada halaman favorite
       security:
         - JWTAuth: []
       parameters:
         - name: id
-          description: id_lahan
+          description: id_mitra
+          in: path
+          schema:
+            type: integer
+            example: 1
+          required: true
+      responses:
+        '200':
+          description: Get Detail Verified Mitra
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseDetailMitra'
+              examples:
+                response1:
+                  description: response success
+                  value:
+                    status: "success"
+                    message: "get detail mitra success"
+                    data: {
+                          id: 1,
+                          name: "new user",
+                          address: "Bali",
+                          no_handphone: "085712344321",
+                          email : "user@mail.com",
+                          file_ktp : "user_ktp.jpg",
+                          profile_photo: "profile_photo.jpg"  ,
+                          gudang_name: "fatmawati warehouse",
+                          gudang_location: "bandung"
+                        }                 
+        '400':
+          description: Fail Get All User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseFail'
+              examples:
+                response1:
+                  description: response fail
+                  value: {
+                    status: "failed",
+                    message: "get detail mitra fail"
+                  }
+    delete:
+      tags:
+        - Favorite
+      summary: penitip menghapus lahan dari halaman favorite
+      security:
+        - JWTAuth: []
+      parameters:
+        - name: id
+          description: id_mitra
           in: path
           schema:
             type: integer
@@ -560,7 +1215,7 @@ paths:
                   description: response success
                   value: {
                     status: "success",
-                    message: "success delete "
+                    message: "success delete"
                   }
         '400':
           description: Fail Delete
@@ -575,216 +1230,15 @@ paths:
                     status: "failed",
                     message: "failed delete"
                   }
-  /myfavorite:
-    get:
-      tags:
-        - Lahan
-      summary: see my favorite lahan
-      security:
-        - JWTAuth: []
-      responses:
-        '200':
-          description: Get My Favorite Lahan
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/responseAllGudang'
-              examples:
-                response1:
-                  description: response success
-                  value:
-                    status: "success"
-                    message: "get my favorite lahan success"
-                    data: 
-                        [
-                           {
-                            photo_gudang: "photo_gudang.jpg",
-                            name: "fatmawati warehouse 300m",
-                            harga: 1200000
-                          },
-                          {
-                            photo_gudang: "photo_gudang.jpg",
-                            name: "fatmawati warehouse 100m",
-                            harga: 1000000
-                          } 
-                        ]                          
-        '400':
-          description: Fail Get My Favorite Lahan
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/responseFail'
-              examples:
-                response1:
-                  description: response fail
-                  value: {
-                    status: "failed",
-                    message: "get my favorite lahan fail"
-                  }
 
   ####################################
-  #  GUDANG
+  #  Order
   ####################################
-  /gudang:
-    get:
-      tags:
-        - Gudang
-      summary: see all gudang
-      security:
-        - JWTAuth: []
-      responses:
-        '200':
-          description: Get All Gudang
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/responseAllGudang'
-              examples:
-                response1:
-                  description: response success
-                  value:
-                    status: "success"
-                    message: "get all gudang success"
-                    data: 
-                        [
-                           {
-                            photo_gudang: "photo_gudang.jpg",
-                            name: "fatmawati warehouse",
-                            harga: 1200000
-                          },
-                          {
-                            photo_gudang: "photo_gudang.jpg",
-                            name: "lembang warehouse",
-                            harga: 1000000
-                          } 
-                        ]                          
-        '400':
-          description: Fail Get All Gudang
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/responseFail'
-              examples:
-                response1:
-                  description: response fail
-                  value: {
-                    status: "failed",
-                    message: "get all data mitra fail"
-                  }
-  /mygudang:
-    get:
-      tags:
-        - Gudang
-      summary: see my list lahan
-      security:
-        - JWTAuth: []
-      responses:
-        '200':
-          description: Get List Lahan
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/responseAllGudang'
-              examples:
-                response1:
-                  description: response success
-                  value:
-                    status: "success"
-                    message: "get list lahan success"
-                    data: 
-                        [
-                           {
-                            photo_gudang: "photo_gudang.jpg",
-                            name: "fatmawati warehouse 300m",
-                            harga: 1200000
-                          },
-                          {
-                            photo_gudang: "photo_gudang.jpg",
-                            name: "fatmawati warehouse 100m",
-                            harga: 1000000
-                          } 
-                        ]                          
-        '400':
-          description: Fail Get List Lahan
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/responseFail'
-              examples:
-                response1:
-                  description: response fail
-                  value: {
-                    status: "failed",
-                    message: "get list lahan fail"
-                  }
-  /myroom:
-    get:
-      tags:
-        - Gudang
-      summary: get my room
-      security:
-        - JWTAuth: []
-      responses:
-        '200':
-          description: Get My Room
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/responseMyRoom'
-            multipart/form-data:
-              schema:
-                $ref: '#/components/schemas/responseMyRoom'
-              examples:
-                response1:
-                  description: response success
-                  value:
-                    status: "success"
-                    message: "get my room success"
-                    data: 
-                        [
-                           {
-                            photo_gudang: "photo_gudang.jpg",
-                            gudang_name: "fatmawati warehouse",
-                            luas: "200m",
-                            address: "jl. kemerdekaan",
-                            lahan_name: "fatmawati warehouse 100m",
-                            tanggal_mulai_sewa: "2022-01-01",
-                            tanggal_akhir_sewa: "2022-02-01",
-                            product_name: "kulkas"
-                          },
-                          {
-                            photo_gudang: "photo_gudang.jpg",
-                            gudang_name: "fatmawati warehouse",
-                            luas: "200m",
-                            address: "jl. kemerdekaan",
-                            lahan_name: "fatmawati warehouse 100m",
-                            tanggal_mulai_sewa: "2022-01-01",
-                            tanggal_akhir_sewa: "2022-02-01",
-                            product_name: "motor"
-                          } 
-                        ] 
-        '400':
-          description: Fail Get My Room
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/responseFail'
-              examples:
-                response1:
-                  description: response fail
-                  value: {
-                    status: "failed",
-                    message: "get my room fail"
-                  }
-
-  ####################################
-  #  CHECKOUT
-  ####################################
-  /checkout:
+  /order:
     post:
       tags:
         - Checkout
-      summary:  checkout lahan
+      summary:  penitip memesan lahan yang sudah di checkout
       security:
         - JWTAuth: []
       requestBody:
@@ -833,66 +1287,7 @@ paths:
                     status: "failed",
                     message: "failed checkout lahan"
                   }
-    get:
-      tags:
-        - Checkout
-      summary: get checkout lahan
-      security:
-        - JWTAuth: []
-      responses:
-        '200':
-          description: Get Checkout Lahan
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/requestCheckoutLahan'
-              examples:
-                response1:
-                  description: response success
-                  value:
-                    status: "success"
-                    message: "get checkout lahan success"
-                    data:
-                        [
-                           {
-                            photo_lahan: "photo_lahan.jpg",
-                            lahan_name: "fatmawati gudang",
-                            harga : 1200000,
-                            mulai_sewa: "2022-01-01",
-                            akhir_sewa: "2022-02-01",
-                            product_name: "kulkas",
-                            address: "jl. kemerdekaan",
-                            pickup_point: "masjid agung",
-                            ongkos_kirim: 30000,
-                          },
-                          {
-                            photo_lahan: "photo_lahan.jpg",
-                            lahan_name: "fatmawati gudang",
-                            harga : 1200000,
-                            mulai_sewa: "2022-01-01",
-                            akhir_sewa: "2022-02-01",
-                            product_name: "kulkas",
-                            address: "jl. kemerdekaan",
-                            pickup_point: "masjid agung",
-                            ongkos_kirim: 30000,
-                          } 
-                        ]
-        '400':
-          description: Fail Get Checkout Lahan
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/responseFail'
-              examples:
-                response1:
-                  description: response fail
-                  value: {
-                    status: "failed",
-                    message: "failed get checkout lahan"
-                  }
-
-
-
+   
 ####################################
   #  COMPONENTS
 ####################################
