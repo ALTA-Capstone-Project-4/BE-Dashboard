@@ -202,5 +202,5 @@ func (delivery *LahanDelivery) GetLahanClient(c echo.Context) error {
 		return c.JSON(400, helper.FailedResponseHelper(err.Error()))
 	}
 
-	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCoreList(data)))
+	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromLahanPenitipList(data)))
 }

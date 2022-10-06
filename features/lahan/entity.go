@@ -1,5 +1,7 @@
 package lahan
 
+import "time"
+
 type Core struct {
 	ID                   int
 	Nama                 string
@@ -25,12 +27,27 @@ type Gudang struct {
 	UserID    uint
 }
 
+type LahanPenitip struct {
+	LahanID      int
+	NamaLahan    string
+	LuasLahan    string
+	GudangID     int
+	NamaGudang   string
+	AlamatGudang string
+	CheckoutID   int
+	NamaBarang   string
+	BillNumber   string
+	StatusBayar  string
+	MulaiSewa    time.Time
+	AkhirSewa    time.Time
+}
+
 type UsecaseInterface interface {
 	PostLahan(data Core, user_id int) (int, error)
 	GetDetailLahan(id int, role string) (Core, error)
 	PutLahan(id int, token int, data Core) (int, error)
 	DeleteLahan(id int, token int, data Core) (int, error)
-	GetLahanClient(token int) ([]Core, error)
+	GetLahanClient(token int) ([]LahanPenitip, error)
 }
 
 type DataInterface interface {
@@ -39,5 +56,5 @@ type DataInterface interface {
 	UpdateLahan(id int, token int, data Core) (int, error)
 	DeleteData(id int, token int, data Core) (int, error)
 	SelectLahanClient(token int) ([]Core, error)
-	SelectLahan_ByClientID(token int) ([]Core, error)
+	SelectLahan_ByClientID(token int) ([]LahanPenitip, error)
 }
