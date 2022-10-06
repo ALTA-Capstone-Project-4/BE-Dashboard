@@ -10,7 +10,6 @@ import (
 type CheckoutRequest struct {
 	NamaBarang       string `json:"nama_barang" form:"nama_barang"`
 	MulaiSewa        string `json:"mulai_sewa" form:"mulai_sewa"`
-	AkhirSewa        string `json:"akhir_sewa" form:"akhir_sewa"`
 	Periode          int    `json:"periode" form:"periode"`
 	MetodePembayaran string `json:"metode_pembayaran" form:"metode_pembayaran"`
 	LahanID          int    `json:"lahan_id" form:"lahan_id"`
