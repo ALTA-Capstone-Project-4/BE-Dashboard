@@ -18,17 +18,6 @@ func New(db *gorm.DB) gudang.DataInterface {
 	}
 }
 
-func (repo *gudangData) UpdateGudang(id int, data gudang.Core) (int, error) {
-	dataModel := fromCore(data)
-
-	tx := repo.db.Where("user_id = ?", id).Model(&Gudang{}).Updates(dataModel)
-	if tx.Error != nil {
-		return -1, tx.Error
-	}
-	return int(tx.RowsAffected), nil
-
-}
-
 func (repo *gudangData) SelectAllLahan(offset int) ([]gudang.Lahan, error) {
 	var dataGudang []Lahan
 

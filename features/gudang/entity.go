@@ -42,14 +42,12 @@ type Lahan struct {
 }
 
 type UsecaseInterface interface {
-	PutGudang(id int, data Core) (int, error)
 	GetAllGudang(page int) ([]Lahan, error)
 	PostGudang(data Core) (int, error)
 	GetGudangByID(gudang_id int) (Core, error)
 }
 
 type DataInterface interface {
-	UpdateGudang(id int, data Core) (int, error)
 	SelectAllLahan(offset int) ([]Lahan, error)
 	CreatGudang(data Core) (int, error)
 	SelectGudangByID(gudang_id int) (Core, error)
