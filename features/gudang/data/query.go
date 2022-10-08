@@ -21,7 +21,7 @@ func New(db *gorm.DB) gudang.DataInterface {
 func (repo *gudangData) SelectAllLahan(offset int) ([]gudang.Lahan, error) {
 	var dataGudang []Lahan
 
-	tx_hargaMin := repo.db.Model(&Lahan{}).Select("gudang_id, MIN(harga) as harga").Group("gudang_id").Find(&dataGudang)
+	tx_hargaMin := repo.db.Model(&Lahan{}).Offset(offset).Limit(8).Select("gudang_id, MIN(harga) as harga").Group("gudang_id").Find(&dataGudang)
 
 	if tx_hargaMin.Error != nil {
 		return nil, tx_hargaMin.Error
