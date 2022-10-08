@@ -85,12 +85,15 @@ func (delivery CheckoutDelivery) PostCheckoutByFav(c echo.Context) error {
 	dataCore.UserID = token
 	dataCore.FotoBarang = image
 
-	hargaLahan, mitra_id, errHarga := delivery.checkoutUsecase.GetDataLahan(dataCheckout.LahanID, role)
+	hargaLahan, mitra_id, statusLahan, errHarga := delivery.checkoutUsecase.GetDataLahan(dataCheckout.LahanID, role)
 
 	if errHarga != nil {
 		return c.JSON(http.StatusInternalServerError, helper.FailedResponseHelper("failed to get harga lahan"))
 	}
 
+	if statusLahan == "disewa" {
+		return c.JSON(http.StatusBadRequest, helper.FailedResponseHelper("lahan already booked"))
+	}
 	dataCore.TotalHarga = hargaLahan * dataCore.Periode
 
 	currentTime := time.Now()
