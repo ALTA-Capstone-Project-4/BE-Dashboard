@@ -32,7 +32,7 @@ func main() {
 			var dataCheckout []modelCheckout.Checkout
 
 			layout_date := "2006-01-02"
-			tx_select := db.Where("akhir_sewa = ?", time.Now().Format(layout_date)+" 07:00:00.000").Find(&dataCheckout)
+			tx_select := db.Where("akhir_sewa = ? OR akhir_sewa = ?", time.Now().Format(layout_date)+" 07:00:00.000", time.Now().Format(layout_date)+" 00:00:00.000").Find(&dataCheckout)
 
 			if tx_select.Error != nil {
 				fmt.Println("gagal mencari checkout yang expired")
