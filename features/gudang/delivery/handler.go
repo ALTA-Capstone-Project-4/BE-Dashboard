@@ -21,6 +21,7 @@ func New(e *echo.Echo, usecase gudang.UsecaseInterface) {
 	e.GET("/gudang", handler.GetAllGudang, middlewares.JWTMiddleware())
 	e.POST("/gudang", handler.PostGudang, middlewares.JWTMiddleware())
 	e.GET("/gudang/:id/lahan", handler.GetGudangByID, middlewares.JWTMiddleware())
+	e.PUT("/gudang", handler.UpdateGudangMitra, middlewares.JWTMiddleware())
 
 }
 
@@ -94,4 +95,29 @@ func (delivery *GudangDelivery) GetGudangByID(c echo.Context) error {
 	}
 
 	return c.JSON(200, helper.SuccessDataResponseHelper("success get data", fromCore(data)))
+}
+
+func (delivery *GudangDelivery) UpdateGudangMitra(c echo.Context) error {
+	id, role, errToken := middlewares.ExtractToken(c)
+
+	if role != "mitra" {
+		return c.JSON(400, helper.FailedResponseHelper("Unauthorized"))
+	}
+	if errToken != nil {
+		return c.JSON(400, helper.FailedResponseHelper("Invalid token"))
+	}
+
+	var dataGudang GudangRequest
+	errBind := c.Bind(&dataGudang)
+	if errBind != nil {
+		return c.JSON(400, helper.FailedResponseHelper("error bind"))
+	}
+	gudangCore := toCore(dataGudang)
+	gudangCore.UserID = uint(id)
+	row_updateGudang, err_updateGudang := delivery.gudangUsecase.UpdateGudangMitra(id, gudangCore)
+
+	if row_updateGudang != 1 || err_updateGudang != nil {
+		return c.JSON(500, helper.FailedResponseHelper("error update data"))
+	}
+	return c.JSON(201, helper.SuccessResponseHelper("success update data"))
 }
