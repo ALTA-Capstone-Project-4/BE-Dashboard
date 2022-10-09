@@ -109,6 +109,7 @@ func toLahanPenitip_FromCheckout(dataCheckout Checkout) lahan.LahanPenitip {
 	dataModel := lahan.LahanPenitip{
 		CheckoutID:  int(dataCheckout.ID),
 		NamaBarang:  dataCheckout.NamaBarang,
+		FotoBarang:  dataCheckout.FotoBarang,
 		BillNumber:  dataCheckout.BillNumber,
 		StatusBayar: dataCheckout.Status,
 		MulaiSewa:   dataCheckout.MulaiSewa,
