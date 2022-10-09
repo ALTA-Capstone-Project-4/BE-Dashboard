@@ -28,7 +28,7 @@ func (repo *gudangData) SelectAllLahan(offset int) ([]gudang.Lahan, error) {
 	}
 
 	for key := range dataGudang {
-		tx := repo.db.Model(&Lahan{}).Offset(offset).Limit(8).Where("harga = ? AND gudang_id = ?", dataGudang[key].Harga, dataGudang[key].GudangID).Find(&dataGudang[key])
+		tx := repo.db.Where("harga = ? AND gudang_id = ?", dataGudang[key].Harga, dataGudang[key].GudangID).Find(&dataGudang[key])
 		if tx.Error != nil {
 			return nil, tx.Error
 		}
