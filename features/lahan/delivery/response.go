@@ -23,6 +23,7 @@ type LahanResponse struct {
 type LahanPenitip struct {
 	CheckoutID   int       `json:"checkout_id,omitempty"`
 	NamaBarang   string    `json:"nama_barang,omitempty"`
+	FotoBarang   string    `json:"foto_barang,omitempty"`
 	BillNumber   string    `json:"bill_number,omitempty"`
 	StatusBayar  string    `json:"status_pembayaran,omitempty"`
 	MulaiSewa    time.Time `json:"mulai_sewa,omitempty"`
@@ -65,6 +66,7 @@ func fromLahanPenitip(data lahan.LahanPenitip) LahanPenitip {
 	return LahanPenitip{
 		CheckoutID:   data.CheckoutID,
 		NamaBarang:   data.NamaBarang,
+		FotoBarang:   data.FotoBarang,
 		BillNumber:   data.BillNumber,
 		StatusBayar:  data.StatusBayar,
 		MulaiSewa:    data.MulaiSewa,

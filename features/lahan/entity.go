@@ -36,6 +36,7 @@ type LahanPenitip struct {
 	AlamatGudang string
 	CheckoutID   int
 	NamaBarang   string
+	FotoBarang   string
 	BillNumber   string
 	StatusBayar  string
 	MulaiSewa    time.Time
