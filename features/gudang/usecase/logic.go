@@ -60,3 +60,12 @@ func (usecase *gudangUsecase) GetGudangByID(gudang_id int) (gudang.Core, error) 
 
 	return data, nil
 }
+
+func (usecase *gudangUsecase) UpdateGudangMitra(user_id int, data gudang.Core) (int, error) {
+	row, err := usecase.gudangData.UpdateGudang(user_id, data)
+	if err != nil {
+		return 0, err
+	}
+	return row, nil
+
+}

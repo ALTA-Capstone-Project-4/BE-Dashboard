@@ -89,3 +89,13 @@ func (repo *gudangData) SelectGudangByID(gudang_id int) (gudang.Core, error) {
 
 	return detailGudang, nil
 }
+
+func (repo *gudangData) UpdateGudang(user_id int, data gudang.Core) (int, error) {
+	dataModel := fromCore(data)
+	tx := repo.db.Where("user_id = ?", user_id).Updates(&dataModel)
+	if tx.Error != nil {
+		return -1, tx.Error
+	}
+
+	return int(tx.RowsAffected), nil
+}

@@ -45,10 +45,12 @@ type UsecaseInterface interface {
 	GetAllGudang(page int) ([]Lahan, error)
 	PostGudang(data Core) (int, error)
 	GetGudangByID(gudang_id int) (Core, error)
+	UpdateGudangMitra(user_id int, data Core) (int, error)
 }
 
 type DataInterface interface {
 	SelectAllLahan(offset int) ([]Lahan, error)
 	CreatGudang(data Core) (int, error)
 	SelectGudangByID(gudang_id int) (Core, error)
+	UpdateGudang(user_id int, data Core) (int, error)
 }
