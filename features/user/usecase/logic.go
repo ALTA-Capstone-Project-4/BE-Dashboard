@@ -110,10 +110,11 @@ func (usecase *userUsecase) GetClient(id int) (user.Core, error) {
 }
 
 func (usecase *userUsecase) PutClient(id int, updateData user.Core) (int, error) {
-	passByte := []byte(updateData.Password)
-	hashPass, _ := bcrypt.GenerateFromPassword(passByte, bcrypt.DefaultCost)
-
-	updateData.Password = string(hashPass)
+	if updateData.Password != "" {
+		passByte := []byte(updateData.Password)
+		hashPass, _ := bcrypt.GenerateFromPassword(passByte, bcrypt.DefaultCost)
+		updateData.Password = string(hashPass)
+	}
 
 	row, err := usecase.userData.UpdateClient(id, updateData)
 	if err != nil || row < 1 {
